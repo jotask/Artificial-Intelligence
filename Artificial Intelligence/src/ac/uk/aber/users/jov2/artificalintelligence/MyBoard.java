@@ -1,5 +1,11 @@
 package ac.uk.aber.users.jov2.artificalintelligence;
 
+import static ac.uk.aber.users.jov2.artificalintelligence.Tile.IDLE;
+import static ac.uk.aber.users.jov2.artificalintelligence.Tile.INI_DELAY;
+import static ac.uk.aber.users.jov2.artificalintelligence.Tile.PLAY;
+import static ac.uk.aber.users.jov2.artificalintelligence.Tile.RANDOMIZE;
+import static ac.uk.aber.users.jov2.artificalintelligence.Tile.START;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
@@ -7,12 +13,12 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Stack;
 
-import static ac.uk.aber.users.jov2.artificalintelligence.Tile.*;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.AStar2;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.AStarTile;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.BreadthFirstSearch;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.DepthFirstSearch;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.IterativeDeeping;
 
 // CS26110 Assignment
 //----------------------------------------------------------------
@@ -27,13 +33,13 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	
 	final static int BOARD_SIZE = 3; // the size of the puzzle, 3x3
 	int delay = INI_DELAY;
-	int status = IDLE;
-	int stepCounter = -1; // used to keep track of the number of expanded nodes
+	public int status = IDLE;
+	public int stepCounter = -1; // used to keep track of the number of expanded nodes
 	private Thread animationThread;
 	int[][] grid = new int[BOARD_SIZE][BOARD_SIZE]; // the 3x3 grid of 'tiles' =
 													// just integers
-	MyBoard next;
-	MyBoard parent; // the parent of this board - used to trace back the path to
+	public MyBoard next;
+	public MyBoard parent; // the parent of this board - used to trace back the path to
 					// the solution from the goal node/board
 	Graphics gr = this.getGraphics();
 	int gWidth;
@@ -42,10 +48,10 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	// the user can decide to stop the algorithm if it's taking too long
 	// Note that a new board will need to be created if another algorithm is to
 	// be run after stopping
-	boolean stopAlgorithm;
+	public boolean stopAlgorithm;
 
 	MyBoard temp;
-	int depth; // the depth of the node in the search, corresponds to g(n)
+	public int depth; // the depth of the node in the search, corresponds to g(n)
 
 	// CS26110 Assignment
 	/**
@@ -464,142 +470,29 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	// As you will see, DFS is not good for solving 8 puzzles...
 	// --------------------------------------------------------------------
 	public MyBoard dfs(MyBoard mb) {
-		MyBoard board;
-		Stack<MyBoard> frontier = new Stack<MyBoard>();
-		frontier.add(mb);
-
-		explored = new HashSet<String>();
-		stepCounter = -1;
-
-		tile.getSoluLabel().setText("Searching ...");
-		boolean displaySearch = tile.getCBDisplay().getState();
-
-		board = frontier.pop();
-
-		while ((!stopAlgorithm) && (!isGoal(board)) && (board != null)) {
-			if (!alreadyVisited(board)) {
-				// Display the step counter
-				stepCounter++;
-				tile.getStepCounterLabel().setText("<html>Nodes explored: <br>" + Integer.toString(stepCounter) + "</html>");
-
-				// Display the inner node
-				if (displaySearch) {
-					copyBoard(this, board);
-				}
-
-				// Add it to the searched board list.
-				addToExplored(board);
-
-				// Attach the expanded succeeding nodes onto the top of the
-				// stack.
-				expandAll(board, frontier, board.depth + 1);
-			}
-
-			board = frontier.pop();
-		}
-
-		return finalise(board, displaySearch);
-	}
-
-	// A HashMap has to be used for IDS as you also need to keep track of the
-	// depth of nodes:
-	// http://stackoverflow.com/questions/12598932/how-to-store-visited-states-in-iterative-deepening-depth-limited-search
-	HashMap<String, Integer> exploredIDS;
-
-	public boolean alreadyVisitedIDS(MyBoard board) {
-		String hash = board.hash();
-		if (exploredIDS.containsKey(hash)) {
-			int depth = exploredIDS.get(hash);
-			// If the previously encountered node was deeper than the current
-			// node 'board' then pretend that we haven't seen it before
-			// This is done as the higher up node could lead to a shallower goal
-			// node ultimately.
-			if (depth > board.depth) {
-				return false; // pretend we haven't seen this before (the
-								// current board is higher up the tree)
-			} else
-				return true; // say that we have seen this before (the current
-								// node is at least at the depth of the
-								// previously stored node)
-		} else
-			return false; // we haven't seen this node before
-	}
-
-	// Add to the explored list. If this state has not been encountered before,
-	// add it to the list
-	public void addToExploredIDS(MyBoard board) {
-		String hash = board.hash(); // get the unique identifier for this board
-		if (!exploredIDS.containsKey(hash))
-			exploredIDS.put(hash, board.depth); // if it doesn't exist already
-												// then add it
-		else { // replace the depth indicator for this existing board to the
-				// smallest value seen
-			int depth = exploredIDS.get(hash);
-			exploredIDS.put(hash, Math.min(depth, board.depth));
-		}
+		DepthFirstSearch dfs = new DepthFirstSearch(this, tile);
+		return dfs.solve(mb);
 	}
 
 	// Iterative deepening search - an incremental depth limit until a solution
 	// is reached
 	public MyBoard iterativeDeepening(MyBoard mb) {
-		MyBoard board = null;
-		stepCounter = -1;
-
-		tile.getSoluLabel().setText("Searching ...");
-		boolean displaySearch = tile.getCBDisplay().getState();
-
-		for (int depth = 0; depth < 1000000000; depth++) {
-			Stack<MyBoard> frontier = new Stack<MyBoard>();
-			mb.depth = 0;
-			frontier.push(mb);
-			exploredIDS = new HashMap<String, Integer>();
-
-			while ((!stopAlgorithm) && (frontier.size() > 0)) {
-				board = frontier.pop();
-				if (isGoal(board))
-					return finalise(board, displaySearch);
-
-				if (!alreadyVisitedIDS(board) && board.depth < depth) {
-					// Display the step counter
-					stepCounter++;
-					tile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(stepCounter)
-							+ "<br>Depth limit: " + depth + "</html>");
-
-					// Display the inner node
-					if (displaySearch) {
-						copyBoard(this, board);
-						paintSlow(this.getGraphics());
-					}
-
-					// Add it to the searched board list.
-					addToExploredIDS(board);
-
-					// Attach the expanded succeeding nodes onto the top of the
-					// stack.
-					expandAll(board, frontier, board.depth + 1);
-				}
-
-			}
-			// if (stopAlgorithm || isGoal(board)) break;
-			if (stopAlgorithm)
-				break;
-		}
-
-		return finalise(board, displaySearch);
+		IterativeDeeping id = new IterativeDeeping(this, tile);
+		return id.solve(mb);
 	}
 
 	// CS26110 Assignment
 	// You need to write the code for this method
 	public MyBoard aStar2(MyBoard mb) {
-		return null;
-		// return finalise(board,displaySearch);
+		AStar2 as2 = new AStar2(this, tile);
+		return as2.solve(mb);
 	}
 
 	// CS26110 Assignment
 	// You need to write the code for this method
 	public MyBoard aStarTiles(MyBoard mb) {
-		return null;
-		// return finalise(board,displaySearch);
+		AStarTile ast = new AStarTile(this, tile);
+		return ast.solve(mb);
 	}
 
 	// CS26110 Assignment - use the structure of this algorithm as a basis for
@@ -608,61 +501,8 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	// (queue: first-in-first-out)
 	// -------------------------------------------------------------------------
 	public MyBoard bfs(MyBoard mb) {
-		MyBoard board = null;// new MyBoard();
-		LinkedList<MyBoard> frontier = new LinkedList<MyBoard>();
-		frontier.add(mb);
-
-		explored = new HashSet<String>();
-		stepCounter = -1;
-
-		tile.getSoluLabel().setText("Searching ...");
-		boolean displaySearch = tile.getCBDisplay().getState();
-
-		board = frontier.poll();
-
-		while ((!stopAlgorithm) && (!isGoal(board)) && (board != null)) {
-			if (!alreadyVisited(board)) {
-				// Display the step counter
-				stepCounter++;
-				tile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(stepCounter) + "</html>");
-
-				// Display the inner node
-				if (displaySearch) {
-					copyBoard(this, board);
-					paintSlow(this.getGraphics());
-				}
-
-				// Add it to the explored list.
-				addToExplored(board);
-
-				// Attach the expanded succeeding nodes onto the tail of the
-				// queue.
-				expandAll(board, frontier, board.depth + 1);
-			}
-
-			board = frontier.poll();
-		}
-
-		return finalise(board, displaySearch);
-
-	}
-
-	// A HashSet is used for the explored list as we only need to check if a
-	// state has been seen before
-	// and we don't need to retain any more information about it
-	HashSet<String> explored = null;
-
-	// check if the state has been visited already
-	public boolean alreadyVisited(MyBoard board) {
-		return explored.contains(board.hash());
-	}
-
-	// Add to the explored list. If this state has not been encountered before,
-	// add it to the list
-	public void addToExplored(MyBoard board) {
-		String hash = board.hash();
-		if (!explored.contains(hash))
-			explored.add(hash);
+		BreadthFirstSearch bfs = new BreadthFirstSearch(this, tile);
+		return bfs.solve(mb);
 	}
 
 	// Used elsewhere - ignore this
@@ -730,56 +570,13 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 		return nextBoardHead.next;
 	}
 
-	// Update the GUI, output statistics
-	public MyBoard finalise(MyBoard finalNode, boolean displaySearch) {
-		// Paint the solution node.
-		if (!stopAlgorithm) {
-			stepCounter++;
-			tile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(stepCounter) + "</html>");
-
-			if (displaySearch) {
-				copyBoard(this, finalNode);
-				paintSlow(this.getGraphics());
-			}
-
-			tile.getSoluLabel().setText("<html>Solution Found!<br>" + "<html>");
-			status = IDLE;
-
-			// calculate the solution length
-			int solutionLength = -1;
-
-			MyBoard boardList = null;
-			MyBoard temp;
-			MyBoard tempNew;
-			temp = finalNode;
-
-			// work back from the final node reached to see the solution path
-			// (and calculate its length)
-			while (temp != null) {
-				solutionLength++;
-				tempNew = new MyBoard(tile);
-				copyBoard(tempNew, temp);
-				tempNew.next = boardList;
-				boardList = tempNew;
-				temp = temp.parent;
-			}
-
-			// Print out some stats
-			System.out.println(" ---------------- ");
-			System.out.println("Nodes expanded: " + stepCounter);
-			System.out.println("Solution length: " + solutionLength);
-			return finalNode;
-		} else {
-			return null;
-		}
-	}
-
 	// CS26110 Assignment
 	// This doesn't work at the moment - you'll need to make sure that the
 	// variable 'f' is calculated correctly elsewhere
 	// Once 'f' is calculated correctly, this will order the MyBoard states in a
 	// priority queue correctly for A* search.
 	public int compareTo(MyBoard board) {
+		// TODO
 		return this.f - board.f;
 	}
 

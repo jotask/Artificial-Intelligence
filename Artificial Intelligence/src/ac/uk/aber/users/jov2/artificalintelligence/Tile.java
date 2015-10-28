@@ -42,11 +42,11 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 	final static int INI_DIFFICULTY = 20; //initial difficulty setting
 	
 	//determines the state of the GUI
-	final static int STOP = 0;
-	final static int RANDOMIZE = 1;
-	final static int IDLE = 2;
-	final static int START = 3;
-	final static int PLAY = 4;
+	public final static int STOP = 0;
+	public final static int RANDOMIZE = 1;
+	public final static int IDLE = 2;
+	public final static int START = 3;
+	public final static int PLAY = 4;
 	
 	JButton stop = new JButton("Stop Search");
 	JButton start = new JButton("Start Search");
