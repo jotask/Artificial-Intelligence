@@ -9,7 +9,6 @@ public abstract class Algorithm {
 	
 	protected MyBoard myBoard;
 	protected Tile myTile;
-	protected int depth;
 	
 	// A HashSet is used for the explored list as we only need to check if a
 	// state has been seen before

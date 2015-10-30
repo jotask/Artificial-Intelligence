@@ -31,19 +31,19 @@ public class BreadthFirstSearch extends Algorithm{
 			if (!alreadyVisited(board)) {
 				
 				this.updateGUI(displaySearch, board);
+				int depth = board.getDepth();
 
 				// Add it to the explored list.
 				addToExplored(board);
 
 				// Attach the expanded succeeding nodes onto the tail of the
 				// queue.
-				depth++;
-				myBoard.expandAll(board, frontier);
+				myBoard.expandAll(board, frontier, depth++);
 			}
 
 			board = frontier.poll();
 		}
-		return finalise(board, displaySearch, depth);
+		return finalise(board, displaySearch, board.getDepth());
 	}
 
 }

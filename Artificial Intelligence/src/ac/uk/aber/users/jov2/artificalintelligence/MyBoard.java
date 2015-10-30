@@ -41,6 +41,8 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	public MyBoard next;
 	public MyBoard parent; // the parent of this board - used to trace back the path to
 					// the solution from the goal node/board
+	private int depth;
+	
 	Graphics gr = this.getGraphics();
 	int gWidth;
 	int gHeight;
@@ -68,7 +70,8 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 
 	// Constructor of the class of MyBoard which also sets the depth of the node
 	// ---------------------------------------------------------
-	public MyBoard() {
+	public MyBoard(int depth) {
+		this.setDepth(depth);
 		addMouseListener(this);
 	}
 
@@ -393,7 +396,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	// You might need to alter this method depending on how you implement the
 	// heuristic calculations
 	// ------------------------------------------------------------------------
-	public void expandAll(MyBoard mb, Collection<MyBoard> list) {
+	public void expandAll(MyBoard mb, Collection<MyBoard> list, int depth) {
 		int p = -1;
 		int q = -1;
 
@@ -406,7 +409,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 				}
 
 		if (legal(p, q - 1)) {
-			MyBoard child = new MyBoard();
+			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
 
 			child.grid[p][q - 1] = mb.grid[p][q];
@@ -417,7 +420,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		}
 
 		if (legal(p, q + 1)) {
-			MyBoard child = new MyBoard();
+			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
 
 			child.grid[p][q + 1] = mb.grid[p][q];
@@ -428,7 +431,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		}
 
 		if (legal(p - 1, q)) {
-			MyBoard child = new MyBoard();
+			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
 
 			child.grid[p - 1][q] = mb.grid[p][q];
@@ -439,7 +442,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		}
 
 		if (legal(p + 1, q)) {
-			MyBoard child = new MyBoard();
+			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
 
 			child.grid[p + 1][q] = mb.grid[p][q];
@@ -477,7 +480,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	// CS26110 Assignment
 	// You need to write the code for this method
 	public MyBoard aStarTiles(MyBoard mb) {
-		// FIXME
 		AStarTile ast = new AStarTile(this, tile);
 		return ast.solve(mb);
 	}
@@ -559,5 +561,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	
 	public int[][] getGoalState(){ return this.goalState; }
 	public int[][] getGrid(){ return this.grid; }
+	public int getDepth(){ return this.depth; }
+	public void setDepth(int depth){ this.depth = depth; }
 
 }

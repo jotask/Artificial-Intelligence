@@ -36,13 +36,13 @@ public class DepthFirstSearch extends Algorithm{
 
 				// Attach the expanded succeeding nodes onto the top of the
 				// stack.
-				depth++;
-				myBoard.expandAll(board, frontier);
+				int depth = board.getDepth();
+				myBoard.expandAll(board, frontier, depth++);
 			}
 
 			board = frontier.pop();
 		}
-		return finalise(board, displaySearch, depth);
+		return finalise(board, displaySearch, board.getDepth());
 	}
 
 }

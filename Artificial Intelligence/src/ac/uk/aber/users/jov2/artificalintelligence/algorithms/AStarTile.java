@@ -34,11 +34,11 @@ public class AStarTile extends Algorithm {
 			if(myBoard.isGoal(current.getBoard()))
 				break;
 
-			depth++;
+			int depth = current.getBoard().getDepth() + 1;
 			this.updateGUIWithDetph(displaySearch, myBoard, depth);
 			
 			ArrayList<MyBoard> neighbours = new ArrayList<MyBoard>();
-			myBoard.expandAll(current.getBoard(), neighbours);
+			myBoard.expandAll(current.getBoard(), neighbours, depth);
 			
 			for(MyBoard board: neighbours){
 				Node node = new Node(board);
