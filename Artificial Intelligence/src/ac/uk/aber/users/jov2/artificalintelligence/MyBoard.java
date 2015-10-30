@@ -25,13 +25,13 @@ import ac.uk.aber.users.jov2.artificalintelligence.algorithms.IterativeDeeping;
 // Define the board and the operations on it.
 // The grid is stored in a 2D array in columns, a 0 is used to indicate the blank
 //----------------------------------------------------------------
-public class MyBoard extends Canvas implements MouseListener, Runnable, Comparable<MyBoard> {
+public class MyBoard extends Canvas implements MouseListener, Runnable{
 	
 	private static final long serialVersionUID = 2975289542336640148L;
 
 	private Tile tile;
 	
-	final static int BOARD_SIZE = 3; // the size of the puzzle, 3x3
+	public final static int BOARD_SIZE = 3; // the size of the puzzle, 3x3
 	int delay = INI_DELAY;
 	public int status = IDLE;
 	public int stepCounter = -1; // used to keep track of the number of expanded nodes
@@ -51,15 +51,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	public boolean stopAlgorithm;
 
 	MyBoard temp;
-	public int depth; // the depth of the node in the search, corresponds to g(n)
-
-	// CS26110 Assignment
-	/**
-	 * These are currently unused but might be useful for your A* and heuristic
-	 * implementation...
-	 **/
-	int heuristic; // h(n)
-	int f; // f(n)
 
 	// What the goal state looks like in this representation
 	int[][] goalState = { { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 } };
@@ -73,14 +64,12 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	public MyBoard(Tile tile) {
 		this.tile = tile;
 		addMouseListener(this);
-		depth = 0;
 	}
 
 	// Constructor of the class of MyBoard which also sets the depth of the node
 	// ---------------------------------------------------------
-	public MyBoard(int d) {
+	public MyBoard() {
 		addMouseListener(this);
-		depth = d;
 	}
 
 	// Reset the status of the board.
@@ -164,7 +153,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 					temp = bfs(this);
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getCBDFS()) {
 					temp = dfs(this);
-
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getCBIT()) {
 					temp = iterativeDeepening(this);
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getAStart()) {
@@ -172,12 +160,10 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getAstartTiles()) {
 					temp = aStarTiles(this);
 				}
-
 				break;
 
 			case PLAY:
 				play(temp);
-
 				break;
 
 			default:
@@ -407,7 +393,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	// You might need to alter this method depending on how you implement the
 	// heuristic calculations
 	// ------------------------------------------------------------------------
-	public void expandAll(MyBoard mb, Collection<MyBoard> list, int depth) {
+	public void expandAll(MyBoard mb, Collection<MyBoard> list) {
 		int p = -1;
 		int q = -1;
 
@@ -420,7 +406,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 				}
 
 		if (legal(p, q - 1)) {
-			MyBoard child = new MyBoard(depth);
+			MyBoard child = new MyBoard();
 			copyBoard(child, mb);
 
 			child.grid[p][q - 1] = mb.grid[p][q];
@@ -431,7 +417,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 		}
 
 		if (legal(p, q + 1)) {
-			MyBoard child = new MyBoard(depth);
+			MyBoard child = new MyBoard();
 			copyBoard(child, mb);
 
 			child.grid[p][q + 1] = mb.grid[p][q];
@@ -442,7 +428,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 		}
 
 		if (legal(p - 1, q)) {
-			MyBoard child = new MyBoard(depth);
+			MyBoard child = new MyBoard();
 			copyBoard(child, mb);
 
 			child.grid[p - 1][q] = mb.grid[p][q];
@@ -453,7 +439,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 		}
 
 		if (legal(p + 1, q)) {
-			MyBoard child = new MyBoard(depth);
+			MyBoard child = new MyBoard();
 			copyBoard(child, mb);
 
 			child.grid[p + 1][q] = mb.grid[p][q];
@@ -491,6 +477,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 	// CS26110 Assignment
 	// You need to write the code for this method
 	public MyBoard aStarTiles(MyBoard mb) {
+		// FIXME
 		AStarTile ast = new AStarTile(this, tile);
 		return ast.solve(mb);
 	}
@@ -569,15 +556,8 @@ public class MyBoard extends Canvas implements MouseListener, Runnable, Comparab
 
 		return nextBoardHead.next;
 	}
-
-	// CS26110 Assignment
-	// This doesn't work at the moment - you'll need to make sure that the
-	// variable 'f' is calculated correctly elsewhere
-	// Once 'f' is calculated correctly, this will order the MyBoard states in a
-	// priority queue correctly for A* search.
-	public int compareTo(MyBoard board) {
-		// TODO
-		return this.f - board.f;
-	}
+	
+	public int[][] getGoalState(){ return this.goalState; }
+	public int[][] getGrid(){ return this.grid; }
 
 }

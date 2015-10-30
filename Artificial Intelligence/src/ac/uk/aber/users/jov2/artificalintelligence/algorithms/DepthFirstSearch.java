@@ -28,26 +28,21 @@ public class DepthFirstSearch extends Algorithm{
 
 		while ((!myBoard.stopAlgorithm) && (!myBoard.isGoal(board)) && (board != null)) {
 			if (!alreadyVisited(board)) {
-				// Display the step counter
-				myBoard.stepCounter++;
-				myTile.getStepCounterLabel().setText("<html>Nodes explored: <br>" + Integer.toString(myBoard.stepCounter) + "</html>");
-
-				// Display the inner node
-				if (displaySearch) {
-					myBoard.copyBoard(myBoard, board);
-				}
+				
+				this.updateGUI(displaySearch, board);
 
 				// Add it to the searched board list.
 				addToExplored(board);
 
 				// Attach the expanded succeeding nodes onto the top of the
 				// stack.
-				myBoard.expandAll(board, frontier, board.depth + 1);
+				depth++;
+				myBoard.expandAll(board, frontier);
 			}
 
 			board = frontier.pop();
 		}
-		return finalise(board, displaySearch);
+		return finalise(board, displaySearch, depth);
 	}
 
 }

@@ -9,6 +9,7 @@ public abstract class Algorithm {
 	
 	protected MyBoard myBoard;
 	protected Tile myTile;
+	protected int depth;
 	
 	// A HashSet is used for the explored list as we only need to check if a
 	// state has been seen before
@@ -23,12 +24,21 @@ public abstract class Algorithm {
 	public abstract MyBoard solve(MyBoard mb);
 	
 
+	public MyBoard finalise(MyBoard finalNode, boolean displaySearch){
+		return finalise(finalNode, displaySearch, -1);
+	}
+	
 	// Update the GUI, output statistics
-	public MyBoard finalise(MyBoard finalNode, boolean displaySearch) {
+	public MyBoard finalise(MyBoard finalNode, boolean displaySearch, int depth) {
 		// Paint the solution node.
 		if (!myBoard.stopAlgorithm) {
 			myBoard.stepCounter++;
-			myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter) + "</html>");
+			if(depth != -1){
+				myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter)
+				+ "<br>Depth limit: " + depth + "</html>");
+			}else{
+				myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter) + "</html>");
+			}
 
 			if (displaySearch) {
 				myBoard.copyBoard(myBoard, finalNode);
@@ -70,6 +80,31 @@ public abstract class Algorithm {
 	// check if the state has been visited already
 	protected boolean alreadyVisited(MyBoard board) {
 		return explored.contains(board.hash());
+	}
+	
+	protected void updateGUIWithDetph(boolean displaySearch, MyBoard board, int depth){
+		// Display the step counter
+		myBoard.stepCounter++;
+		myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter)
+				+ "<br>Depth limit: " + depth + "</html>");
+
+		// Display the inner node
+		if (displaySearch) {
+			myBoard.copyBoard(myBoard, board);
+			myBoard.paintSlow(myBoard.getGraphics());
+		}
+	}
+	
+	protected void updateGUI(boolean displaySearch, MyBoard board){
+		// Display the step counter
+		myBoard.stepCounter++;
+		myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter) + "</html>");
+
+		// Display the inner node
+		if (displaySearch) {
+			myBoard.copyBoard(myBoard, board);
+			myBoard.paintSlow(myBoard.getGraphics());
+		}
 	}
 
 	// Add to the explored list. If this state has not been encountered before,

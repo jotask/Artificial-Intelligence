@@ -62,10 +62,11 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 
 	//Checkboxes for selecting the algorithms
 	CheckboxGroup cbg = new CheckboxGroup();
-	Checkbox cbBfs = new Checkbox("Breadth First", cbg, true);
+	Checkbox cbBfs = new Checkbox("Breadth First", cbg, false);
 	Checkbox cbDfs = new Checkbox("Depth First", cbg, false);
 	Checkbox cbIt = new Checkbox("Iterative Deepening", cbg, false);
-	Checkbox cbAStarTiles = new Checkbox("A*-Tiles", cbg, false);
+	// TODO Change this one to false and the first-one to true
+	Checkbox cbAStarTiles = new Checkbox("A*-Tiles", cbg, true);
 	Checkbox cbAStar = new Checkbox("A*-2", cbg, false);
 
 	Checkbox cbDisplay = new Checkbox("Display Search");
@@ -166,6 +167,8 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 		sliderRandomize.setMinorTickSpacing(MAX_DIFFICULTY / 20);
 		sliderRandomize.setPaintTicks(true);
 		sliderRandomize.setPaintLabels(true);
+		// TODO this line. Just is for Debug
+		sliderRandomize.setValue(sliderRandomize.getMaximum());
 
 		southPanel.add("North", sliderRandomizePanel);
 
@@ -177,8 +180,11 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 		stop.addActionListener(this);
 		start.addActionListener(this);
 		play.addActionListener(this);
-
+		
 		board.start();
+		
+		// TODO Delete all the next Lines, just is make it for DEbug propurposses
+		board.setStatus(RANDOMIZE);
 	}
 
 	//-------------------------------------------------------------

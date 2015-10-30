@@ -24,7 +24,7 @@ public class IterativeDeeping extends Algorithm {
 
 		for (int depth = 0; depth < 1000000000; depth++) {
 			Stack<MyBoard> frontier = new Stack<MyBoard>();
-			mb.depth = 0;
+			this.depth = 0;
 			frontier.push(mb);
 			exploredIDS = new HashMap<String, Integer>();
 
@@ -33,24 +33,17 @@ public class IterativeDeeping extends Algorithm {
 				if (myBoard.isGoal(board))
 					return finalise(board, displaySearch);
 
-				if (!alreadyVisitedIDS(board) && board.depth < depth) {
-					// Display the step counter
-					myBoard.stepCounter++;
-					myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter)
-							+ "<br>Depth limit: " + depth + "</html>");
-
-					// Display the inner node
-					if (displaySearch) {
-						myBoard.copyBoard(myBoard, board);
-						myBoard.paintSlow(myBoard.getGraphics());
-					}
+				if (!alreadyVisitedIDS(board) && this.depth < depth) {
+					
+					this.updateGUIWithDetph(displaySearch, board, depth);
 
 					// Add it to the searched board list.
 					addToExploredIDS(board);
 
 					// Attach the expanded succeeding nodes onto the top of the
 					// stack.
-					myBoard.expandAll(board, frontier, board.depth + 1);
+					depth++;
+					myBoard.expandAll(board, frontier);
 				}
 
 			}
@@ -76,7 +69,7 @@ public class IterativeDeeping extends Algorithm {
 			// node 'board' then pretend that we haven't seen it before
 			// This is done as the higher up node could lead to a shallower goal
 			// node ultimately.
-			if (depth > board.depth) {
+			if (depth > this.depth) {
 				return false; // pretend we haven't seen this before (the
 								// current board is higher up the tree)
 			} else
@@ -92,12 +85,12 @@ public class IterativeDeeping extends Algorithm {
 	private void addToExploredIDS(MyBoard board) {
 		String hash = board.hash(); // get the unique identifier for this board
 		if (!exploredIDS.containsKey(hash))
-			exploredIDS.put(hash, board.depth); // if it doesn't exist already
+			exploredIDS.put(hash, this.depth); // if it doesn't exist already
 												// then add it
 		else { // replace the depth indicator for this existing board to the
 				// smallest value seen
 			int depth = exploredIDS.get(hash);
-			exploredIDS.put(hash, Math.min(depth, board.depth));
+			exploredIDS.put(hash, Math.min(depth, this.depth));
 		}
 	}
 

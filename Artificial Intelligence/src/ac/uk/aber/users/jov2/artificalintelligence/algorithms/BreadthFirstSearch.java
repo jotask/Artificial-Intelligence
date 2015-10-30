@@ -29,28 +29,21 @@ public class BreadthFirstSearch extends Algorithm{
 
 		while ((!myBoard.stopAlgorithm) && (!myBoard.isGoal(board)) && (board != null)) {
 			if (!alreadyVisited(board)) {
-				// Display the step counter
-				myBoard.stepCounter++;
-				myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter) + "</html>");
-
-				// Display the inner node
-				if (displaySearch) {
-					myBoard.copyBoard(myBoard, board);
-					myBoard.paintSlow(myBoard.getGraphics());
-				}
+				
+				this.updateGUI(displaySearch, board);
 
 				// Add it to the explored list.
 				addToExplored(board);
 
 				// Attach the expanded succeeding nodes onto the tail of the
 				// queue.
-				myBoard.expandAll(board, frontier, board.depth + 1);
+				depth++;
+				myBoard.expandAll(board, frontier);
 			}
 
 			board = frontier.poll();
 		}
-
-		return finalise(board, displaySearch);
+		return finalise(board, displaySearch, depth);
 	}
 
 }
