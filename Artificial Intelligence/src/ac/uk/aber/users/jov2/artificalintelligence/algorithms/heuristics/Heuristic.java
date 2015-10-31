@@ -1,14 +1,27 @@
 package ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics;
 
-import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
+import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
 
-public abstract class Heuristic {
+/**
+ * Class for hold the abstract heuristic
+ * All the different heuristic types needs
+ * extend from this class for calculate the
+ * heuristic
+ * 
+ * @author Jota
+ *
+ */
+public abstract class Heuristic{
 	
-	protected MyBoard board;
-	protected int h;
-	
-	protected Heuristic(MyBoard board) {
-		this.board = board;
-	}
+	/**
+	 * An abstract method for calculate the heuristic
+	 * from an given Node
+	 * 
+	 * @param n 
+	 * 			The Node for calculate his heuristic
+	 * @return
+	 * 			The heuristic value for the node
+	 */
+	public abstract int heuristic(Node n);
 
 }
