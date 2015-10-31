@@ -30,8 +30,8 @@ public class BreadthFirstSearch extends Algorithm{
 		while ((!myBoard.stopAlgorithm) && (!myBoard.isGoal(board)) && (board != null)) {
 			if (!alreadyVisited(board)) {
 				
-				this.updateGUI(displaySearch, board);
 				int depth = board.getDepth();
+				this.updateGUI(displaySearch, board);
 
 				// Add it to the explored list.
 				addToExplored(board);

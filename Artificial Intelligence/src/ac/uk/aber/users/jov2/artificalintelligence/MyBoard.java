@@ -14,11 +14,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
 
-import ac.uk.aber.users.jov2.artificalintelligence.algorithms.AStar2;
-import ac.uk.aber.users.jov2.artificalintelligence.algorithms.AStarTile;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.AStar;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.BreadthFirstSearch;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.DepthFirstSearch;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.IterativeDeeping;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Manhattan;
 
 // CS26110 Assignment
 //----------------------------------------------------------------
@@ -139,7 +139,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	// Namely, repaint the display board according to the board status.
 	// -----------------------------------------------------------
 	public void run() {
-		System.out.println("Tile Puzzle is running ... ...");
 
 		while (true) {
 			switch (status) {
@@ -147,7 +146,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 				temp = null;
 				initBoard();
 				paintSlow(this.getGraphics());
-
 				break;
 
 			case START:
@@ -241,7 +239,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	// ---------------------------------------------------------
 	public int setDelay(int newDelay) {
 		delay = newDelay;
-
 		return delay;
 	}
 
@@ -473,15 +470,15 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	// CS26110 Assignment
 	// You need to write the code for this method
 	public MyBoard aStar2(MyBoard mb) {
-		AStar2 as2 = new AStar2(this, tile);
-		return as2.solve(mb);
+		AStar as = new AStar(this, tile, new Manhattan());
+		return as.solve(mb);
 	}
 
 	// CS26110 Assignment
 	// You need to write the code for this method
 	public MyBoard aStarTiles(MyBoard mb) {
-		AStarTile ast = new AStarTile(this, tile);
-		return ast.solve(mb);
+		AStar as = new AStar(this, tile, new Manhattan());
+		return as.solve(mb);
 	}
 
 	// CS26110 Assignment - use the structure of this algorithm as a basis for
@@ -557,6 +554,16 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		}
 
 		return nextBoardHead.next;
+	}
+	
+	private void setState(int[][] grid){
+		this.grid = grid;
+	}
+	
+	public MyBoard getGoalBoard(){
+		MyBoard goal = new MyBoard(-1);
+		goal.setState(getGoalState());
+		return goal;
 	}
 	
 	public int[][] getGoalState(){ return this.goalState; }
