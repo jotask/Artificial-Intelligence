@@ -45,7 +45,7 @@ public abstract class Algorithm {
 			}
 
 			myTile.getSoluLabel().setText("<html>Solution Found!<br>" + "<html>");
-			myBoard.status = Tile.IDLE;
+			myBoard.setStatus(Tile.IDLE);
 
 			// calculate the solution length
 			int solutionLength = -1;

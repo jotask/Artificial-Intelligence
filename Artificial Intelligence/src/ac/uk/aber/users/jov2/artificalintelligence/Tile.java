@@ -15,12 +15,9 @@ import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JApplet;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -30,8 +27,6 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 
 	private static final long serialVersionUID = 780417925043043398L;
 	//Some constants to be used elsewhere
-	private final static int WINDOW_WIDTH = 560;
-	private final static int WINDOW_HEIGHT = 780;
 	
 	final static int MIN_DELAY = 0;
 	final static int MAX_DELAY = 3000;
@@ -214,31 +209,6 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 			int value = sliderDisplay.getValue();
 			board.setDelay(value);
 		}
-	}
-
-	//--------------------------------------------------------
-	// Create and run the application.
-	//--------------------------------------------------------
-	public static void main(String[] args) {
-		JFrame applicationFrame = new JFrame(
-				"8 Puzzle");
-
-		// kill application when window closes
-		applicationFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-
-		Tile appletObject = new Tile();
-		appletObject.init();
-
-		applicationFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		applicationFrame.getContentPane().add(appletObject);
-		applicationFrame.pack();
-
-		applicationFrame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		applicationFrame.setVisible(true);
 	}
 	
 	public CheckboxGroup getCBG(){ return this.cbg; }

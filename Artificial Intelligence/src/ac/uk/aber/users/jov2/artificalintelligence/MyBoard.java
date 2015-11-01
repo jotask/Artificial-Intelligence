@@ -19,6 +19,7 @@ import ac.uk.aber.users.jov2.artificalintelligence.algorithms.BreadthFirstSearch
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.DepthFirstSearch;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.IterativeDeeping;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Manhattan;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.TileHeuristic;
 
 // CS26110 Assignment
 //----------------------------------------------------------------
@@ -30,36 +31,35 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	private static final long serialVersionUID = 2975289542336640148L;
 
 	private Tile tile;
-	
 	public final static int BOARD_SIZE = 3; // the size of the puzzle, 3x3
-	int delay = INI_DELAY;
-	public int status = IDLE;
+	private int delay = INI_DELAY;
+	private int status = IDLE;
 	public int stepCounter = -1; // used to keep track of the number of expanded nodes
 	private Thread animationThread;
-	int[][] grid = new int[BOARD_SIZE][BOARD_SIZE]; // the 3x3 grid of 'tiles' =
+	private int[][] grid = new int[BOARD_SIZE][BOARD_SIZE]; // the 3x3 grid of 'tiles' =
 													// just integers
 	public MyBoard next;
-	public MyBoard parent; // the parent of this board - used to trace back the path to
-					// the solution from the goal node/board
+	public MyBoard parent;
+	
 	private int depth;
 	
-	Graphics gr = this.getGraphics();
-	int gWidth;
-	int gHeight;
+	private Graphics gr = this.getGraphics();
+	private int gWidth;
+	private int gHeight;
 
 	// the user can decide to stop the algorithm if it's taking too long
 	// Note that a new board will need to be created if another algorithm is to
 	// be run after stopping
 	public boolean stopAlgorithm;
 
-	MyBoard temp;
+	private MyBoard temp;
 
 	// What the goal state looks like in this representation
-	int[][] goalState = { { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 } };
+	private int[][] goalState = { { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 } };
 
 	// These map from the tile to its coordinates in the goalState array
-	int[] xcoord = { 0, 1, 2, 0, 1, 2, 0, 1, 2 };
-	int[] ycoord = { 0, 0, 0, 1, 1, 1, 2, 2, 2 };
+//	private int[] xcoord = { 0, 1, 2, 0, 1, 2, 0, 1, 2 };
+//	private int[] ycoord = { 0, 0, 0, 1, 1, 1, 2, 2, 2 };
 
 	// Constructor of the class of MyBoard
 	// ---------------------------------------------------------
@@ -73,12 +73,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	public MyBoard(int depth) {
 		this.setDepth(depth);
 		addMouseListener(this);
-	}
-
-	// Reset the status of the board.
-	// --------------------------------------------------------
-	public void setStatus(int newStatus) {
-		status = newStatus;
 	}
 
 	// print the grid in a one dimensional format
@@ -477,7 +471,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	// CS26110 Assignment
 	// You need to write the code for this method
 	public MyBoard aStarTiles(MyBoard mb) {
-		AStar as = new AStar(this, tile, new Manhattan());
+		AStar as = new AStar(this, tile, new TileHeuristic());
 		return as.solve(mb);
 	}
 
@@ -560,6 +554,11 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		this.grid = grid;
 	}
 	
+	// TODO delete this methods
+	public void setGrid(int[][] grid){
+		this.grid = grid;
+	}
+	
 	public MyBoard getGoalBoard(){
 		MyBoard goal = new MyBoard(-1);
 		goal.setState(getGoalState());
@@ -568,6 +567,10 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	
 	public int[][] getGoalState(){ return this.goalState; }
 	public int[][] getGrid(){ return this.grid; }
+	
+	public int getStatus() { return status; }
+	public void setStatus(int newStatus) { status = newStatus; }
+
 	public int getDepth(){ return this.depth; }
 	public void setDepth(int depth){ this.depth = depth; }
 
