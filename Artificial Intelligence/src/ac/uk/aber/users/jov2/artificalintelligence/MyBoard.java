@@ -21,23 +21,31 @@ import ac.uk.aber.users.jov2.artificalintelligence.algorithms.IterativeDeeping;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Manhattan;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.TileHeuristic;
 
-// CS26110 Assignment
-//----------------------------------------------------------------
-// Define the board and the operations on it.
-// The grid is stored in a 2D array in columns, a 0 is used to indicate the blank
-//----------------------------------------------------------------
+/**
+ * Define the board and the operations on it.
+ * The grid is stored in a 2D array in columns, a 0
+ * is used to indicate the blank
+ * 
+ * @author Richard Jensen and Jose Vives
+ *
+ */
 public class MyBoard extends Canvas implements MouseListener, Runnable{
 	
 	private static final long serialVersionUID = 2975289542336640148L;
 
 	private Tile tile;
-	public final static int BOARD_SIZE = 3; // the size of the puzzle, 3x3
+	/**
+	 * The size of the puzzle, 3x3
+	 */
+	public final static int BOARD_SIZE = 3;
 	private int delay = INI_DELAY;
 	private int status = IDLE;
-	public int stepCounter = -1; // used to keep track of the number of expanded nodes
+	/**
+	 * Used to keep track of the numbers of expanded nodes
+	 */
+	public int stepCounter = -1;
 	private Thread animationThread;
-	private int[][] grid = new int[BOARD_SIZE][BOARD_SIZE]; // the 3x3 grid of 'tiles' =
-													// just integers
+	private int[][] grid = new int[BOARD_SIZE][BOARD_SIZE];
 	public MyBoard next;
 	public MyBoard parent;
 	
@@ -47,93 +55,109 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 	private int gWidth;
 	private int gHeight;
 
-	// the user can decide to stop the algorithm if it's taking too long
-	// Note that a new board will need to be created if another algorithm is to
-	// be run after stopping
+	/**
+	 * the user can decide to stop the algorithm if it's taking too long
+	 * Note that a new board will need to be created if another algorithm is to
+	 * be run after stopping
+	 */
 	public boolean stopAlgorithm;
 
 	private MyBoard temp;
 
-	// What the goal state looks like in this representation
+	/**
+	 * What the goal state looks like in this represantion
+	 */
 	private int[][] goalState = { { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 } };
 
 	// These map from the tile to its coordinates in the goalState array
 //	private int[] xcoord = { 0, 1, 2, 0, 1, 2, 0, 1, 2 };
 //	private int[] ycoord = { 0, 0, 0, 1, 1, 1, 2, 2, 2 };
 
-	// Constructor of the class of MyBoard
-	// ---------------------------------------------------------
+	/**
+	 * Main constructor of the class of MyBoard
+	 * @param tile
+	 * 			The tile instance
+	 */
 	public MyBoard(Tile tile) {
 		this.tile = tile;
 		addMouseListener(this);
 	}
 
-	// Constructor of the class of MyBoard which also sets the depth of the node
-	// ---------------------------------------------------------
+	/**
+	 * Constructor of the class of MyBoard which also sets the depth of the node
+	 * @param depth
+	 * 			the int value of the current depth
+	 */
 	public MyBoard(int depth) {
 		this.setDepth(depth);
 		addMouseListener(this);
 	}
 
-	// print the grid in a one dimensional format
-	// In this format, the goal would be printed: { 0 1 2 3 4 5 6 7 8 }
+	/**
+	 * print the grid in a one dimensional format
+	 * In this format, the goal would be printed: { 0 1 2 3 4 5 6 7 8 }
+	 * @return
+	 */
 	public String print() {
 		String ret = "{ ";
-
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
 				ret += grid[j][i] + " ";
 			}
 		}
-
 		return ret + "}";
 	}
 
-	// CS26110 Assignment (though not too important)
-	// Used for the explored list. Converts the grid into a String and this is
-	// used to determine if the grid has been seen before.
-	// The String is used to obtain a unique integer identifier for the String
-	// (and hence the grid) and this can be used to see if
-	// a particular grid is identical to another one (the integer values will be
-	// the same in this case). You could also use String.equals.
+	/**
+	 * CS26110 Assignment (though not too important)
+	 * 
+	 * Used for the explored list. Converts the grid into a String and this is
+	 * used to determine if the grid has been seen before.
+	 * The String is used to obtain a unique integer identifier for the String
+	 * (and hence the grid) and this can be used to see if
+	 * a particular grid is identical to another one (the integer values will be
+	 * the same in this case). You could also use String.equals.
+	 * 
+	 * @return
+	 * 		The generated hash for this grid state
+	 */
 	public String hash() {
 		String ret = "";
-
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				ret += grid[i][j];
 			}
 		}
-
 		return ret;
 	}
 
-	// Start a new Thread to listen to the status change.
-	// ---------------------------------------------------------
+	/**
+	 * Start a new Thread to listen to the status change
+	 */
 	public void start() {
 		if ((animationThread == null) || (!animationThread.isAlive())) {
 			animationThread = new Thread(this);
 		}
-
 		animationThread.start();
 	}
 
-	// Stop the Thread.
-	// ------------------------------------------------------------
+	/**
+	 * Stop the Thread
+	 * Look at the Java Tutorial or 
+	 * http://java.sun.com/products/jdk/1.2/docs/guide/misc/threadPrimitiveDeprecation.html
+	 */
 	public void stop() {
 		if ((animationThread != null) && (animationThread.isAlive())) {
-			// look at the Java Tutorial or
-			// http://java.sun.com/products/jdk/1.2/docs/guide/misc/threadPrimitiveDeprecation.html
 			animationThread = null;
 		}
 	}
 
-	// Run the thread. This is required when you implement the Runnable
-	// interface.
-	// Namely, repaint the display board according to the board status.
-	// -----------------------------------------------------------
+	/**
+	 * Run the Thread. This is required when you implement the Runnable
+	 * interface.
+	 * Namely, repaint the display board according to the board status
+	 */
 	public void run() {
-
 		while (true) {
 			switch (status) {
 			case RANDOMIZE:
@@ -141,9 +165,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 				initBoard();
 				paintSlow(this.getGraphics());
 				break;
-
 			case START:
-
 				if (tile.getCBG().getSelectedCheckbox() == tile.getCBBFS()) {
 					temp = bfs(this);
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getCBDFS()) {
@@ -156,29 +178,29 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 					temp = aStarTiles(this);
 				}
 				break;
-
 			case PLAY:
 				play(temp);
 				break;
-
 			default:
 				break;
 			}
 		}
 	}
 
-	// Initialises the configuration of this board according to the difficulty
-	// slider.
-	// The difficulty slider sets a number of (random) moves to make to the
-	// initial grid to
-	// scramble it. The higher the difficulty setting, the more scrambling will
-	// result
-	//
-	// As an aside, this guarantees that a solvable puzzle will be produced.
-	// It's possible to
-	// generate unsolvable 8 puzzles if you're not careful (i.e. just randomly
-	// generating grids).
-	// -----------------------------------------------------------
+
+	/**
+	 * Initialises the configuration of this board according to the difficulty
+	 * slider.
+	 * The difficulty slider sets a number of (random) moves to make to the
+	 * initial grid to
+	 * scramble it. The higher the difficulty setting, the more scrambling will
+	 * result
+	 *
+	 * As an aside, this guarantees that a solvable puzzle will be produced.
+	 * It's possible to
+	 * generate unsolvable 8 puzzles if you're not careful (i.e. just randomly
+	 * generating grids).
+	 */
 	public void initBoard() {
 		int difficulty;
 		int counter;
@@ -196,7 +218,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 			for (int j = 0; j < BOARD_SIZE; j++)
 				grid[i][j] = (j * BOARD_SIZE) + i;
 
-		// get the value from the GUI
+		// Get the value from the GUI
 		difficulty = tile.getSliderRandomizer().getValue();
 
 		// For each difficulty 'step', make a random move
@@ -229,30 +251,39 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		status = IDLE;
 	}
 
-	// Set the delay value of paint
-	// ---------------------------------------------------------
+	/**
+	 * Set the delay value of paint
+	 * @param newDelay
+	 * 			The new delay value
+	 * @return
+	 * 			the delay value
+	 */
 	public int setDelay(int newDelay) {
 		delay = newDelay;
 		return delay;
 	}
 
-	// Paint the entire board.
-	// --------------------------------------------------------
+	/**
+	 * Paint the entire board
+	 * @param g
+	 * 		The Graphics instance for use
+	 */
 	public void paint(Graphics g) {
 		gr = g;
 		gWidth = getBounds().width / BOARD_SIZE;
 		gHeight = getBounds().height / BOARD_SIZE;
-
 		for (int i = 0; i < BOARD_SIZE; i++)
 			for (int j = 0; j < BOARD_SIZE; j++)
 				drawCell(i, j);
 	}
 
-	// Paint the entire board with the delay controlled by the slider.
-	// ---------------------------------------------------------------
+	/**
+	 * Paint the entire board with the delay controlled by the slider
+	 * @param g
+	 * 		The Graphics instace for use
+	 */
 	public void paintSlow(Graphics g) {
 		repaint();
-
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
@@ -260,8 +291,13 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		}
 	}
 
-	// Draw a specific cell on the board.
-	// ---------------------------------------------------------
+	/**
+	 * Draw a specific cell on the board
+	 * @param x
+	 * 		The x position
+	 * @param y
+	 * 		The y position
+	 */
 	public void drawCell(int x, int y) {
 		// Draw the outline of the cell.
 		gr.setColor(Color.black);
@@ -276,44 +312,45 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		switch (grid[x][y]) {
 		case 0:
 			break;
-
 		default:
 			gr.setColor(Color.white);
 			gr.fillRect((x * gWidth) + 15, (y * gHeight) + 15, gWidth - 30, gHeight - 30);
 			gr.setColor(Color.black);
 			gr.drawChars(Integer.toString(grid[x][y]).toCharArray(), 0, Integer.toString(grid[x][y]).length(),
 					(x * gWidth) + (gWidth / 2), (y * gHeight) + (gHeight / 2));
-
 			break;
 		}
 	}
 
-	// Handle the mouse actions.
-	// The five methods are required when you implement the MouseListener
-	// interface.
-	// --------------------------------------------------------------------------
-	public void mousePressed(MouseEvent e) {
-	}
+	/** Handle the mouse pressed action */
+	public void mousePressed(MouseEvent e) { }
 
-	public void mouseExited(MouseEvent e) {
-	}
+	/** Handle the mouse exit action */
+	public void mouseExited(MouseEvent e) { }
 
-	public void mouseReleased(MouseEvent e) {
-	}
+	/** Handle the mouse released action */
+	public void mouseReleased(MouseEvent e) { }
 
-	public void mouseClicked(MouseEvent e) {
-	}
+	/** Handle the mouse clicked action */
+	public void mouseClicked(MouseEvent e) { }
 
-	public void mouseEntered(MouseEvent e) {
-	}
+	/** Handle the mouse entered action */
+	public void mouseEntered(MouseEvent e) { }
 
-	// CS26110 Assignment
-	// See whether current configuration is a goal.
-	// The relationship between the graph and coordinates is below:
-	// (0,0) (1,0) (2,0)
-	// (0,1) (1,1) (2,1)
-	// (0,2) (1,2) (2,2)
-	// -----------------------------------------------------------------------
+	/**
+	 * CS26110 Assignment
+	 * See whether current configuration is a goal.
+	 * The relationship between the graph and coordinates is below.
+	 * 
+	 * (0,0) (1,0) (2,0)
+	 * (0,1) (1,1) (2,1)
+	 * (0,2) (1,2) (2,2)
+	 * 
+	 * @param mb
+	 * 			The Board to check if is a goal
+	 * @return
+	 * 			If is the goal
+	 */
 	public boolean isGoal(MyBoard mb) {
 		for (int i = 0; i < BOARD_SIZE; i++)
 			for (int j = 0; j < BOARD_SIZE; j++)
@@ -324,29 +361,44 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		return true;
 	}
 
-	// Returns true if the coordinates are a legal board position.
-	// -----------------------------------------------------------------------
+	/**
+	 * Check if the coordinates are legal boar position
+	 * @param x
+	 * 			The x coordinate
+	 * @param y
+	 * 			The y coordinate
+	 * @return
+	 * 			If is legal thats coordinates
+	 */
 	public boolean legal(int x, int y) {
 		return ((x >= 0) && (x < BOARD_SIZE) && (y >= 0) && (y < BOARD_SIZE));
 	}
 
-	// Copy the grid from an old board to a new board.
-	// -----------------------------------------------------------------------
+	/**
+	 * Copy the grid from an old board to a new board
+	 * @param mbNew
+	 * 			The new board for copy
+	 * @param mbOld
+	 * 			The old board to copy
+	 */
 	public void copyBoard(MyBoard mbNew, MyBoard mbOld) {
 		for (int i = 0; i < BOARD_SIZE; i++)
 			for (int j = 0; j < BOARD_SIZE; j++)
 				mbNew.grid[i][j] = mbOld.grid[i][j];
 	}
 
-	// find the ancestor link of the solution board.
-	// ------------------------------------------------------------------------
+	/**
+	 * Fin the ancestor link of the solution
+	 * @param mb
+	 * 		The board who have the solution
+	 * @return
+	 * 		The board where start the solution
+	 */
 	public MyBoard findAncestors(MyBoard mb) {
 		MyBoard boardList = null;
 		MyBoard temp;
 		MyBoard tempNew;
-
 		temp = mb;
-
 		while (temp != null) {
 			tempNew = new MyBoard(tile);
 			copyBoard(tempNew, temp);
@@ -354,16 +406,17 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 			boardList = tempNew;
 			temp = temp.parent;
 		}
-
 		return boardList;
 	}
 
-	// display a board List for a solution.
-	// ------------------------------------------------------------------------
+	/**
+	 * Display a board List for solution
+	 * @param mb
+	 * 		The Board 
+	 */
 	public void displaySolution(MyBoard mb) {
 		MyBoard temp = mb;
 		stepCounter = -1;
-
 		while (temp != null) {
 			stepCounter++;
 			tile.getStepCounterLabel().setText("<html>Solution step: <br>" + Integer.toString(stepCounter) + "</html>");
@@ -373,24 +426,35 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 		}
 	}
 
-	// After search, play the solution.
-	// ------------------------------------------------------------------------
+	/**
+	 * After search, play the solution
+	 * @param mb
+	 * 			The start board
+	 */
 	public void play(MyBoard mb) {
 		tile.getSliderDisplay().setValue(INI_DELAY);
 		displaySolution(findAncestors(mb));
 		status = IDLE;
 	}
-
-	// CS26110 Assignment
-	// Expand all the possible succeeding configurations. These are the actions.
-	// The current board has 2, 3, or 4 succeeding boards.
-	// You might need to alter this method depending on how you implement the
-	// heuristic calculations
-	// ------------------------------------------------------------------------
+	
+	/**
+	 * 	CS26110 Assignment
+	 * 
+	 * Expand all the possible succeeding configurations. These are the actions.
+	 * The current board has 2, 3, or 4 succeeding boards.
+	 * You might need to alter this method depending on how you implement the
+	 * heuristic calculations
+	 * 
+	 * @param mb
+	 * 		The board to expand
+	 * @param list
+	 * 		The list to add all his succesors
+	 * @param depth
+	 * 		The depth we are currently
+	 */
 	public void expandAll(MyBoard mb, Collection<MyBoard> list, int depth) {
 		int p = -1;
 		int q = -1;
-
 		// locate the "0" tile.
 		for (int i = 0; i < BOARD_SIZE; i++)
 			for (int j = 0; j < BOARD_SIZE; j++)
@@ -398,57 +462,51 @@ public class MyBoard extends Canvas implements MouseListener, Runnable{
 					p = i;
 					q = j;
 				}
-
 		if (legal(p, q - 1)) {
 			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
-
 			child.grid[p][q - 1] = mb.grid[p][q];
 			child.grid[p][q] = mb.grid[p][q - 1];
 			child.parent = mb;
-
 			list.add(child);
 		}
-
 		if (legal(p, q + 1)) {
 			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
-
 			child.grid[p][q + 1] = mb.grid[p][q];
 			child.grid[p][q] = mb.grid[p][q + 1];
 			child.parent = mb;
-
 			list.add(child);
 		}
 
 		if (legal(p - 1, q)) {
 			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
-
 			child.grid[p - 1][q] = mb.grid[p][q];
 			child.grid[p][q] = mb.grid[p - 1][q];
 			child.parent = mb;
-
 			list.add(child);
 		}
 
 		if (legal(p + 1, q)) {
 			MyBoard child = new MyBoard(depth);
 			copyBoard(child, mb);
-
 			child.grid[p + 1][q] = mb.grid[p][q];
 			child.grid[p][q] = mb.grid[p + 1][q];
 			child.parent = mb;
-
 			list.add(child);
 		}
-
 	}
 
-	// Depth first search (DFS)
-	// Uses a stack. (last-in-first-out)
-	// As you will see, DFS is not good for solving 8 puzzles...
-	// --------------------------------------------------------------------
+	/**
+	 * Depth First Search (DFS
+	 * Uses a stact. (last-in-last-out)
+	 * As you will see, DFS is not a good for solving 8 puzzles...
+	 * @param mb
+	 * 		The board to solve
+	 * @return
+	 * 		The board solved
+	 */
 	public MyBoard dfs(MyBoard mb) {
 		DepthFirstSearch dfs = new DepthFirstSearch(this, tile);
 		return dfs.solve(mb);

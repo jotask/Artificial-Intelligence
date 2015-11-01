@@ -5,6 +5,13 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+/**
+ * Main class which hold the main method.
+ * All the magic start here
+ * 
+ * @author Richard Jensen and Jose Vives
+ *
+ */
 public class Application {
 
 	private final static int WINDOW_WIDTH = 560;
@@ -13,7 +20,7 @@ public class Application {
 	public Application() {
 		JFrame applicationFrame = new JFrame( "8 Puzzle");
 
-		// kill application when window closes
+		// Kill application when window closes
 		applicationFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);

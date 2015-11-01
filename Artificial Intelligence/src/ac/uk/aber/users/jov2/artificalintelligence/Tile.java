@@ -1,12 +1,4 @@
 package ac.uk.aber.users.jov2.artificalintelligence;
-/*************************************
- * Tile-Sliding Puzzle
- *************************************
- * contact:  zhengyi.le@dartmouth.edu
- * Date: 1/22/2004
- * Modified by Richard Jensen, 2015
- *************************************
- */
 
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
@@ -23,39 +15,45 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * All the GUI components for the application
+ * 
+ * Tile-Sliding Puzzle contact: zhengyi.le@dartmouth.edu Date: 1/22/2004
+ *
+ * @author Richard Jensen and Jose Vives
+ *
+ */
 public class Tile extends JApplet implements ActionListener, ChangeListener {
 
 	private static final long serialVersionUID = 780417925043043398L;
-	//Some constants to be used elsewhere
-	
+
+	// Some constants to be used elsewhere
 	final static int MIN_DELAY = 0;
 	final static int MAX_DELAY = 3000;
 	final static int INI_DELAY = 1500;
-	
+
 	final static int MIN_DIFFICULTY = 0;
 	final static int MAX_DIFFICULTY = 100;
-	final static int INI_DIFFICULTY = 20; //initial difficulty setting
-	
-	//determines the state of the GUI
+	final static int INI_DIFFICULTY = 20; // initial difficulty setting
+
+	// Determines the state of the GUI
 	public final static int STOP = 0;
 	public final static int RANDOMIZE = 1;
 	public final static int IDLE = 2;
 	public final static int START = 3;
 	public final static int PLAY = 4;
-	
+
+	// GUI components
 	JButton stop = new JButton("Stop Search");
 	JButton start = new JButton("Start Search");
 	JButton play = new JButton("Play Solution");
 	JButton randomize = new JButton("Mix it!");
-	JSlider sliderDisplay = new JSlider(JSlider.HORIZONTAL, MIN_DELAY,
-			MAX_DELAY, INI_DELAY);
-	JSlider sliderRandomize = new JSlider(JSlider.HORIZONTAL, MIN_DIFFICULTY,
-			MAX_DIFFICULTY, INI_DIFFICULTY);
-	JLabel stepCounterLabel = new JLabel("<html>Nodes expanded: <br>" + "0" +
-			"</html>");
+	JSlider sliderDisplay = new JSlider(JSlider.HORIZONTAL, MIN_DELAY, MAX_DELAY, INI_DELAY);
+	JSlider sliderRandomize = new JSlider(JSlider.HORIZONTAL, MIN_DIFFICULTY, MAX_DIFFICULTY, INI_DIFFICULTY);
+	JLabel stepCounterLabel = new JLabel("<html>Nodes expanded: <br>" + "0" + "</html>");
 	JLabel soluLabel = new JLabel(" ");
 
-	//Checkboxes for selecting the algorithms
+	// Checkboxes for selecting the algorithms
 	CheckboxGroup cbg = new CheckboxGroup();
 	Checkbox cbBfs = new Checkbox("Breadth First", cbg, false);
 	Checkbox cbDfs = new Checkbox("Depth First", cbg, false);
@@ -65,8 +63,12 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 	Checkbox cbAStar = new Checkbox("A*-2", cbg, false);
 
 	Checkbox cbDisplay = new Checkbox("Display Search");
-	MyBoard board = new MyBoard(this); // this MyBoard b is used to display the graphic of the current borad.
+	MyBoard board = new MyBoard(this); // this MyBoard b is used to display the
+										// graphic of the current borad.
 
+	/**
+	 * Initialise all the variables and put everything in his place
+	 */
 	public void init() {
 		getContentPane().setLayout(new BorderLayout());
 
@@ -74,8 +76,7 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 		Panel sliderDisplayPanel = new Panel();
 		sliderDisplayPanel.setLayout(new GridLayout(3, 1));
 
-		JLabel sliderDisplayLabel = new JLabel("Display Interval : ( ms )",
-				JLabel.CENTER);
+		JLabel sliderDisplayLabel = new JLabel("Display Interval : ( ms )", JLabel.CENTER);
 		sliderDisplayPanel.add(sliderDisplayLabel);
 		sliderDisplayPanel.add(sliderDisplay);
 		sliderDisplayPanel.add(new JLabel("  "));
@@ -90,7 +91,7 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 		// Add the board onto the center of the frame.
 		getContentPane().add("Center", board);
 
-		// Add the  east Panel.
+		// Add the east Panel.
 		Panel eastPanel = new Panel();
 
 		eastPanel.setLayout(new BorderLayout());
@@ -153,8 +154,7 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 		sliderRandomizePanel.setLayout(new GridLayout(3, 1));
 		sliderRandomizePanel.add(new JLabel(" "));
 
-		JLabel sliderRandomizeLabel = new JLabel("Randomize the initial board:  (easy --> difficult)",
-				JLabel.CENTER);
+		JLabel sliderRandomizeLabel = new JLabel("Randomize the initial board:  (easy --> difficult)", JLabel.CENTER);
 		sliderRandomizePanel.add(sliderRandomizeLabel);
 		sliderRandomizePanel.add(sliderRandomize);
 
@@ -175,16 +175,17 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 		stop.addActionListener(this);
 		start.addActionListener(this);
 		play.addActionListener(this);
-		
+
 		board.start();
-		
-		// TODO Delete all the next Lines, just is make it for DEbug propurposses
+
+		// TODO Delete all the next Lines, just is make it for DEbug
+		// propurposses
 		board.setStatus(RANDOMIZE);
 	}
 
-	//-------------------------------------------------------------
-	// Listen to the actions of the buttons and the slider.
-	//-------------------------------------------------------------
+	/**
+	 * Listen to the actions of the buttons and the slider
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == stop) {
 			board.stopAlgorithm = true;
@@ -193,34 +194,66 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 			board.setStatus(RANDOMIZE);
 		} else if (e.getSource() == start) {
 			board.setStatus(START);
-			stepCounterLabel.setText("<html>Nodes expanded: <br>" + "0" +
-					"</html>");
+			stepCounterLabel.setText("<html>Nodes expanded: <br>" + "0" + "</html>");
 			soluLabel.setText(" ");
 		} else if (e.getSource() == play) {
 			board.setStatus(PLAY);
 		}
 	}
 
-	//-------------------------------------------------------
-	// Reset the delay value of display from the slider
-	//-------------------------------------------------------
+	/**
+	 * Reset the delay value of display from the slider
+	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == sliderDisplay) {
 			int value = sliderDisplay.getValue();
 			board.setDelay(value);
 		}
 	}
-	
-	public CheckboxGroup getCBG(){ return this.cbg; }
-	public Checkbox getCBBFS(){ return this.cbBfs; }
-	public Checkbox getCBDFS(){ return this.cbDfs; }
-	public Checkbox getCBIT(){ return this.cbIt; }
-	public Checkbox getAStart(){ return this.cbAStar; }
-	public Checkbox getAstartTiles(){ return this.cbAStarTiles; }
-	public JSlider getSliderDisplay(){ return this.sliderDisplay; }
-	public JLabel getStepCounterLabel(){ return this.stepCounterLabel; }
-	public JLabel getSoluLabel(){ return this.soluLabel; }
-	public JSlider getSliderRandomizer(){ return this.sliderRandomize; }
-	public Checkbox getCBDisplay(){ return this.cbDisplay; }
-	
+
+	// Getters
+	public CheckboxGroup getCBG() {
+		return this.cbg;
+	}
+
+	public Checkbox getCBBFS() {
+		return this.cbBfs;
+	}
+
+	public Checkbox getCBDFS() {
+		return this.cbDfs;
+	}
+
+	public Checkbox getCBIT() {
+		return this.cbIt;
+	}
+
+	public Checkbox getAStart() {
+		return this.cbAStar;
+	}
+
+	public Checkbox getAstartTiles() {
+		return this.cbAStarTiles;
+	}
+
+	public JSlider getSliderDisplay() {
+		return this.sliderDisplay;
+	}
+
+	public JLabel getStepCounterLabel() {
+		return this.stepCounterLabel;
+	}
+
+	public JLabel getSoluLabel() {
+		return this.soluLabel;
+	}
+
+	public JSlider getSliderRandomizer() {
+		return this.sliderRandomize;
+	}
+
+	public Checkbox getCBDisplay() {
+		return this.cbDisplay;
+	}
+
 }
