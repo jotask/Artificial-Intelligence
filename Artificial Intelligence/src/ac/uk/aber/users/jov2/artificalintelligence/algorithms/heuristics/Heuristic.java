@@ -22,6 +22,6 @@ public abstract class Heuristic{
 	 * @return
 	 * 			The heuristic value for the node
 	 */
-	public abstract int heuristic(Node n);
+	public abstract int calculate(Node a, Node b);
 
 }
