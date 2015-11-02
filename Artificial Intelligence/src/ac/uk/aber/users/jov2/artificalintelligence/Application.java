@@ -18,8 +18,10 @@ public class Application {
 	private final static int WINDOW_HEIGHT = 780;
 	
 	public Application() {
+		// Create the frame for the GUI
 		JFrame applicationFrame = new JFrame( "8 Puzzle");
 
+		// Add a listener to the windows
 		// Kill application when window closes
 		applicationFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -27,6 +29,7 @@ public class Application {
 			}
 		});
 
+		// Create the Tile
 		Tile appletObject = new Tile();
 		appletObject.init();
 
@@ -38,6 +41,12 @@ public class Application {
 		applicationFrame.setVisible(true);
 	}
 	
+	/**
+	 * Main method
+	 * This method is the first method called
+	 * @param args
+	 * 			Possible arguments the user can we pass from the console
+	 */
 	public static void main(String[] args) {
 		new Application();
 	}

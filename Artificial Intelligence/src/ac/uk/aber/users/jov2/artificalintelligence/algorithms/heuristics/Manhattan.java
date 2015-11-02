@@ -3,8 +3,11 @@ package ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics;
 import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
 
 /**
- * Implements the heuristic Manhattan Manhattan distance is the sum of the
- * absolute values of the horizontal and the vertical distance
+ * Implements the heuristic Manhattan distance is the sum of the
+ * absolute values of the horizontal and the vertical distance.
+ * 
+ * Calculate the distance of two nodes iterating for each value
+ * and know how far is from the target goal
  * 
  * @author Jose Vives
  *
@@ -25,6 +28,9 @@ public class Manhattan extends Heuristic {
 		return count;
 	}
 
+	/**
+	 * Know how far is one tile to the target tile
+	 */
 	private int moves(int[][] grid, int[][] target, int row, int col) {
 		// find the position of the number we want
 		// row vertical Y

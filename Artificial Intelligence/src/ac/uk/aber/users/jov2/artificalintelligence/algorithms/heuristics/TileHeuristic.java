@@ -2,8 +2,18 @@ package ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics;
 
 import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
 
+/**
+ * This class calculate how many tiles are not
+ * in his correct position
+ *  
+ * @author Jose Vives
+ *
+ */
 public class TileHeuristic extends Heuristic {
 
+	/**
+	 * Know how many tiles are not in place
+	 */
 	@Override
 	public int calculate(Node current, Node goal) {
 		int count = 0;
