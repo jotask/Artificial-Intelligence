@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 
-public class Node {
+public class Node implements Comparable<Node>{
 	
 	private Node came_from;
 	private int g;
@@ -25,20 +25,35 @@ public class Node {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof Node))
-			return false;
-		if(obj == this)
-			return true;
+		if(!(obj instanceof Node)) return false;
+		if(this.getClass() != obj.getClass())return false;
 		Node that = (Node) obj;
 		return Arrays.equals(board.getGrid(), that.getBoard().getGrid());
-		
 	}
 	
-	public int getG(){ return this.g;}
-	public void setG(int g){ this.g = g; }
-	public int getF(){ return this.g + this.h; }
-	public int getH(){ return this.h; }
-	public void setH(int h){ this.h = h; }
+	public String getHash(){
+		return this.getBoard().hash();
+	}
+	
+	public int getG(){
+		return this.g;
+	}
+	
+	public void setG(int g){
+		this.g = g;
+	}
+	
+	public int getF(){
+		return this.g + this.h;
+	}
+	
+	public int getH(){
+		return this.h;
+	}
+	
+	public void setH(int h){
+		this.h = h;
+	}
 	
 	public Node getParent(){
 		return this.came_from;
@@ -76,11 +91,10 @@ public class Node {
 		}
 		return successors;
 	}
-	
+
 	@Override
-	public String toString() {
-		String s = "G: " + getG() + " H: " + getH() + " F: " + getF();
-		return s;
+	public int compareTo(Node o) {
+		return this.getF() - o.getF();
 	}
 
 }

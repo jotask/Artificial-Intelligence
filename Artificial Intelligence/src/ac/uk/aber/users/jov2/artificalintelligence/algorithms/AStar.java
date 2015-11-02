@@ -1,7 +1,9 @@
 package ac.uk.aber.users.jov2.artificalintelligence.algorithms;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 import ac.uk.aber.users.jov2.artificalintelligence.Tile;
@@ -9,7 +11,7 @@ import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Heurist
 import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
 
 public class AStar extends Algorithm {
-	
+
 	boolean testB = true;
 
 	private final Heuristic heuristic;
@@ -22,81 +24,46 @@ public class AStar extends Algorithm {
 	@Override
 	public MyBoard solve(MyBoard mb) {
 		
+		Node goal = new Node(mb.getGoalBoard());
 		Node start = new Node(mb);
-		start.setG(0);
 		start.setDepth(0);
-		Node goal = new Node(myBoard.getGoalBoard());
-
-		ArrayList<Node> open = new ArrayList<Node>();
-		ArrayList<Node> closed = new ArrayList<Node>();
-		open.add(start);
+		start.setDepth(0);
+		start.setH(this.heuristic.calculate(start, goal));
+		
+		PriorityQueue<Node> open = new PriorityQueue<Node>();
+		Set<String> closed = new HashSet<String>();
+		open.offer(start);
 		
 		myBoard.stepCounter = -1;
 		myTile.getSoluLabel().setText("Searching ...");
 		boolean displaySearch = myTile.getCBDisplay().getState();
-
-		int depth = start.getDepth();
 		
-		Node current = null;
-		while (!open.isEmpty() && !myBoard.stopAlgorithm) {
-			current = getLowest(open);
-			if (current.isGoal()) {
-				return finalise(current.getBoard(), displaySearch, current.getDepth());
+		while(!open.isEmpty()){
+			Node current = open.poll();
+			closed.add(current.getHash());
+			
+			if(current.isGoal()){
+				return finalise(current.getBoard(), false);
 			}
-			this.updateGUIWithDetph(displaySearch, current.getBoard(), current.getDepth());
-			open.remove(current);
-			closed.add(current);
-			depth++;
-			ArrayList<Node> succesors = current.getSuccessors(depth);
-			for (Node node : succesors) {
-				node.setG(current.getG() + 1);
-				node.setParent(current);
-				node.setH(this.heuristic.calculate(node, goal));
-				if (!open.contains(node) && !closed.contains(node)) {
-					open.add(node);
-				} else {
-					Node tmp = inList(node, open);
-					if(tmp != null){
-						if(node.getG() < tmp.getG()){
-							open.remove(tmp);
-							open.add(node);
-						}else{
-							tmp = inList(node, closed);
-							if(tmp != null){
-								if(node.getG() < tmp.getG()){
-									closed.remove(tmp);
-									closed.add(node);
-								}
-							}
-						}
-					}
-					
+			
+			int depth = current.getDepth() + 1;
+			this.updateGUI(displaySearch, current.getBoard());
+			
+			ArrayList<Node> successors = current.getSuccessors(depth);
+			for(Node n: successors){
+				
+				n.setParent(current);
+				n.setG(current.getG() + 1);
+				n.setH(this.heuristic.calculate(n, goal));
+				
+				if(!closed.contains(n.getHash())){
+					open.offer(n);
 				}
+				
 			}
 		}
-		System.out.println("Not solution founded!");
-		return null;
-	}
-	
-	private Node inList(Node node, Collection<Node> list){
-		for(Node n: list){
-			if(node.equals(n)){
-				return n;
-			}
-		}
-		return null;
-	}
-
-	private Node getLowest(ArrayList<Node> open) {
-		Node lowest = null;
-		int lowestF = Integer.MAX_VALUE;
-		for (Node n : open) {
-			if (n.getF() < lowestF) {
-				lowest = n;
-				lowestF = lowest.getF();
-			}
-		}
-		return lowest;
+		myTile.getSoluLabel().setText("This Board doesn´t have any solution");
+		throw new RuntimeException("This Board doesn´t have any solution");
 	}
 
 }
