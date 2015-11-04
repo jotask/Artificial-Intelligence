@@ -747,7 +747,5 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	public void setDepth(int depth) {
 		this.depth = depth;
 	}
-	
-	// TEST BRANCH
 
 }

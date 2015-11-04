@@ -15,6 +15,9 @@ import ac.uk.aber.users.jov2.artificalintelligence.Tile;
  */
 public abstract class Algorithm {
 	
+	private long startTime;
+	private long finishTime;
+	
 	/**
 	 * The instance of the generic board
 	 */
@@ -96,7 +99,6 @@ public abstract class Algorithm {
 				myBoard.paintSlow(myBoard.getGraphics());
 			}
 
-			myTile.getSoluLabel().setText("<html>Solution Found!<br>" + "<html>");
 			myBoard.setStatus(Tile.IDLE);
 
 			// calculate the solution length
@@ -119,6 +121,10 @@ public abstract class Algorithm {
 			}
 
 			// Print out some stats
+			String text = "<html>Solution Found!<br>" + "<html>";
+			myTile.getSoluLabel().setText("<html><p>Nodes expanded: "+myBoard.stepCounter+"</p>"+
+						"<p>Solution lengh: "+solutionLength+"</p>"+
+						"<p> Solution found in: "+getTime()+"</p></html>");
 			System.out.println(" ---------------- ");
 			System.out.println("Nodes expanded: " + myBoard.stepCounter);
 			System.out.println("Solution length: " + solutionLength);
@@ -126,6 +132,13 @@ public abstract class Algorithm {
 		} else {
 			return null;
 		}
+	}
+	
+	public MyBoard solveWithTime(MyBoard mb){
+		this.startTime();
+		MyBoard board = solve(mb);
+		this.finishTime();
+		return board;
 	}
 	
 	/**
@@ -156,6 +169,21 @@ public abstract class Algorithm {
 			myBoard.copyBoard(myBoard, board);
 			myBoard.paintSlow(myBoard.getGraphics());
 		}
+	}
+	
+	private void startTime(){
+		startTime = System.currentTimeMillis();
+	}
+	
+	private void finishTime(){
+		finishTime = System.currentTimeMillis();
+	}
+	
+	private long getTime(){
+		long time = 0;
+		// TODO
+		time = startTime - finishTime;
+		return time;
 	}
 
 	/**
