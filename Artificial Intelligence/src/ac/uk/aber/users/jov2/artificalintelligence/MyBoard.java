@@ -546,7 +546,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 */
 	public MyBoard dfs(MyBoard mb) {
 		DepthFirstSearch dfs = new DepthFirstSearch(this, tile);
-		return dfs.solve(mb);
+		return dfs.solveWithTime(mb);
 	}
 
 	/**
@@ -559,7 +559,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 */
 	public MyBoard iterativeDeepening(MyBoard mb) {
 		IterativeDeeping id = new IterativeDeeping(this, tile);
-		return id.solve(mb);
+		return id.solveWithTime(mb);
 	}
 
 	/**
@@ -574,7 +574,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 */
 	public MyBoard aStar2(MyBoard mb) {
 		AStar as = new AStar(this, tile, new Manhattan());
-		return as.solve(mb);
+		return as.solveWithTime(mb);
 	}
 
 	/**
@@ -589,7 +589,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 */
 	public MyBoard aStarTiles(MyBoard mb) {
 		AStar as = new AStar(this, tile, new TileHeuristic());
-		return as.solve(mb);
+		return as.solveWithTime(mb);
 	}
 
 	/**
@@ -602,7 +602,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 */
 	public MyBoard bfs(MyBoard mb) {
 		BreadthFirstSearch bfs = new BreadthFirstSearch(this, tile);
-		return bfs.solve(mb);
+		return bfs.solveWithTime(mb);
 	}
 	
 	/**

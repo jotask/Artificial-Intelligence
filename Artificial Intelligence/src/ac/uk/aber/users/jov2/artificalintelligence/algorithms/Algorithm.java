@@ -121,10 +121,18 @@ public abstract class Algorithm {
 			}
 
 			// Print out some stats
-			String text = "<html>Solution Found!<br>" + "<html>";
-			myTile.getSoluLabel().setText("<html><p>Nodes expanded: "+myBoard.stepCounter+"</p>"+
-						"<p>Solution lengh: "+solutionLength+"</p>"+
-						"<p> Solution found in: "+getTime()+"</p></html>");
+			StringBuilder text = new StringBuilder();
+			text.append("<html>");
+			text.append("<p>Nodes expanded: " + myBoard.stepCounter + "</p>");
+			text.append("<p>Solution lengh: " + solutionLength + "</p>");
+			
+			long time = getTime();
+			if(time != 0)
+				text.append("<p> Solution found in: " + time + "</p>");
+			text.append("</html>");
+			
+			myTile.getSoluLabel().setText(text.toString());
+			
 			System.out.println(" ---------------- ");
 			System.out.println("Nodes expanded: " + myBoard.stepCounter);
 			System.out.println("Solution length: " + solutionLength);
@@ -180,9 +188,9 @@ public abstract class Algorithm {
 	}
 	
 	private long getTime(){
-		long time = 0;
 		// TODO
-		time = startTime - finishTime;
+		long time = startTime - finishTime;
+				System.out.println(time);
 		return time;
 	}
 
