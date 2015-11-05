@@ -68,7 +68,7 @@ public class AStar extends Algorithm {
 		boolean displaySearch = myTile.getCBDisplay().getState();
 		
 		// Iterate the open queue until is empty
-		while(!open.isEmpty()){
+		while((!myBoard.stopAlgorithm) && (!open.isEmpty())){
 			// Poll the node from the queue with the lowest F value
 			Node current = open.poll();
 			// Add the current node to the checked list
