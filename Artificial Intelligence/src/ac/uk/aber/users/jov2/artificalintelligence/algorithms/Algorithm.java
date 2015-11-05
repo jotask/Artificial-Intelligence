@@ -1,6 +1,7 @@
 package ac.uk.aber.users.jov2.artificalintelligence.algorithms;
 
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 import ac.uk.aber.users.jov2.artificalintelligence.Tile;
@@ -56,7 +57,7 @@ public abstract class Algorithm {
 	 * 		solution
 	 */
 	public abstract MyBoard solve(MyBoard mb);
-	
+		
 	/**
 	 * Construct the path for the solution
 	 * 	This method call the generic methods with a negative depth
@@ -82,8 +83,11 @@ public abstract class Algorithm {
 	 * 		boolean for know if we want display the search
 	 * @return
 	 * 		The initial board with the path build it
-	 */
+	 */	
 	public MyBoard finalise(MyBoard finalNode, boolean displaySearch, int depth) {
+		// Store the actual nanotime
+		finishTime = System.nanoTime();
+		
 		// Paint the solution node.
 		if (!myBoard.stopAlgorithm) {
 			myBoard.stepCounter++;
@@ -126,26 +130,31 @@ public abstract class Algorithm {
 			text.append("<p>Nodes expanded: " + myBoard.stepCounter + "</p>");
 			text.append("<p>Solution lengh: " + solutionLength + "</p>");
 			
-			long time = getTime();
-			if(time != 0)
-				text.append("<p> Solution found in: " + time + "</p>");
+			String time = getHTMLTime();
+			if(!time.equals(""))
+				text.append("<p>" + time + "</p>");
+			
 			text.append("</html>");
 			
 			myTile.getSoluLabel().setText(text.toString());
-			
-			System.out.println(" ---------------- ");
-			System.out.println("Nodes expanded: " + myBoard.stepCounter);
-			System.out.println("Solution length: " + solutionLength);
 			return finalNode;
 		} else {
 			return null;
 		}
 	}
 	
+	/**
+	 * This methods do the same algorithm but just knowing how many
+	 * time the algorithm needs to be completed. With this method
+	 * we know how many time has been elapsed for solve the puzzle
+	 * @param mb
+	 * 		The board we want solve
+	 * @return
+	 * 		The board with the path solved
+	 */
 	public MyBoard solveWithTime(MyBoard mb){
-		this.startTime();
+		startTime = System.nanoTime();
 		MyBoard board = solve(mb);
-		this.finishTime();
 		return board;
 	}
 	
@@ -179,19 +188,39 @@ public abstract class Algorithm {
 		}
 	}
 	
-	private void startTime(){
-		startTime = System.currentTimeMillis();
+	/**
+	 * Generate the HTML for knowing the time elapsed
+	 * 
+	 * @return
+	 * 		The HTML tag with the time calculated and converted
+	 * 		to milliseconds
+	 */
+	private String getHTMLTime(){
+		long time = getTime();
+		StringBuilder text = new StringBuilder();
+		
+		// FIXME doesn't calculate the right elapsed time
+		if(time != 0){
+			text.append("Solved in ");
+			System.out.println(time);
+			text.append(TimeUnit.MILLISECONDS.convert(time, TimeUnit.NANOSECONDS) + " ms.");
+		}else{
+			text.append("");
+		}
+		
+		return text.toString();
 	}
 	
-	private void finishTime(){
-		finishTime = System.currentTimeMillis();
-	}
-	
+	/**
+	 * Calculate the time elapsed between two nanotime
+	 * @return
+	 * 		The time elapsed between the start and the
+	 * 		finish time
+	 */
 	private long getTime(){
-		// TODO
-		long time = startTime - finishTime;
-				System.out.println(time);
-		return time;
+		long end = finishTime - startTime;
+		System.out.println("Total time is: " + end);
+		return end;
 	}
 
 	/**

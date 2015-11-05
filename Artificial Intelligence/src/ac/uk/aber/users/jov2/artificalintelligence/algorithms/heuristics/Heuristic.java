@@ -8,7 +8,7 @@ import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
  * extend from this class for calculate the
  * heuristic
  * 
- * @author Jota
+ * @author Jose Vives
  *
  */
 public abstract class Heuristic{
