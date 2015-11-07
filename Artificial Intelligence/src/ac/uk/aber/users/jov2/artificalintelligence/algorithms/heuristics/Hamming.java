@@ -9,7 +9,7 @@ import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
  * @author Jose Vives
  *
  */
-public class TileHeuristic extends Heuristic {
+public class Hamming extends Heuristic {
 
 	/**
 	 * Know how many tiles are not in place
@@ -21,7 +21,10 @@ public class TileHeuristic extends Heuristic {
 		int target[][] = goal.getBoard().getGrid();
 		for (int row = 0; row < grid.length; row++) {
 			for (int col = 0; col < grid[0].length; col++) {
-				if(grid[row][col] != target[row][col]){
+				// If the tile is not the empty space
+				// and the tile is not in his final state
+				// add one to the count
+				if((grid[row][col] != 0) && (grid[row][col] != target[row][col])){
 					count++;
 				}
 			}
