@@ -31,7 +31,7 @@ public class Node implements Comparable<Node>{
 	/**
 	 * The instance of the board for this state
 	 */
-	private MyBoard board;
+	private final MyBoard board;
 	
 	/**
 	 * Constructor for the Node class
@@ -45,8 +45,8 @@ public class Node implements Comparable<Node>{
 		this.board = board;
 		this.g = 0;
 		this.h = 0;
-	};
-	
+	}
+
 	/**
 	 * Compare this object with another object
 	 * this override the equals methods for make it
@@ -81,13 +81,13 @@ public class Node implements Comparable<Node>{
 	/**
 	 * Return the f value of this node
 	 * The f value is the sum of the g cost and 
-	 * the heuristic value. So we don´t need to
+	 * the heuristic value. So we donï¿½t need to
 	 * store this value, just we want the value
 	 * calculate it for it
 	 * @return
 	 * 		The f value for this node
 	 */
-	public int getF(){
+	private int getF(){
 		return this.g + this.h;
 	}
 	
@@ -178,9 +178,9 @@ public class Node implements Comparable<Node>{
 	 * 		possibles successors
 	 */
 	public ArrayList<Node> getSuccessors(int depth){
-		ArrayList<MyBoard> boards = new ArrayList<MyBoard>();
+		ArrayList<MyBoard> boards = new ArrayList<>();
 		this.getBoard().expandAll(this.getBoard(), boards, depth);
-		ArrayList<Node> successors = new ArrayList<Node>();
+		ArrayList<Node> successors = new ArrayList<>();
 		for(MyBoard b: boards){
 			Node node = new Node(b);
 			node.setDepth(depth);
@@ -190,7 +190,7 @@ public class Node implements Comparable<Node>{
 	}
 
 	/**
-	 * Used for compare the F values is used in the priorityqueue
+	 * Used for compare the F values is used in the priority queue
 	 */
 	@Override
 	public int compareTo(Node o) {

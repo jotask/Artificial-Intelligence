@@ -46,8 +46,7 @@ public class Manhattan extends Heuristic {
 				}
 			}
 		}
-		int move = Math.abs(row - yGoal) + Math.abs(col - xGoal);
-		return move;
+		return Math.abs(row - yGoal) + Math.abs(col - xGoal);
 	}
 
 }

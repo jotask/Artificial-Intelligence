@@ -6,12 +6,12 @@ import java.util.Stack;
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 import ac.uk.aber.users.jov2.artificalintelligence.Tile;
 
-public class IterativeDeeping extends Algorithm {
+public class IterativeDeepening extends Algorithm {
 	
 	//A HashMap has to be used for IDS as you also need to keep track of the depth of nodes:
 	HashMap<String, Integer> exploredIDS;
 
-	public IterativeDeeping(MyBoard myBoard, Tile myTile) {
+	public IterativeDeepening(MyBoard myBoard, Tile myTile) {
 		super(myBoard, myTile);
 	}
 	
@@ -41,7 +41,7 @@ public class IterativeDeeping extends Algorithm {
 					// Display the inner node
 					if (displaySearch) {
 						myBoard.copyBoard(myBoard, board);
-						myBoard.paintSlow(myBoard.getGraphics());
+						myBoard.paintSlow();
 					}
 
 					// Add it to the searched board list.
@@ -57,19 +57,13 @@ public class IterativeDeeping extends Algorithm {
 		return finalise(board,displaySearch);
 	}
 	
-	public boolean alreadyVisitedIDS(MyBoard board) {
+	private boolean alreadyVisitedIDS(MyBoard board) {
 		String hash = board.hash();
 		if (exploredIDS.containsKey(hash)) {
 			int depth = exploredIDS.get(hash);
 			//If the previously encountered node was deeper than the current node 'board' then pretend that we haven't seen it before
 			//This is done as the higher up node could lead to a shallower goal node ultimately.
-			if (depth>board.getDepth()) {
-				//pretend we haven't seen this before  (the current board is higher up the tree)
-				return false; 
-			} else{
-				//say that we have seen this before (the current node is at least at the depth of the previously stored node)
-				return true; 
-			}
+			return depth <= board.getDepth();
 		} else{
 			//we haven't seen this node before
 			return false; 
@@ -77,7 +71,7 @@ public class IterativeDeeping extends Algorithm {
 	}
 
 	//Add to the explored list. If this state has not been encountered before, add it to the list
-	public void addToExploredIDS(MyBoard board) {
+	private void addToExploredIDS(MyBoard board) {
 		// get the unique identifier for this board
 		String hash = board.hash();
 		// if it doesn't exist already then add it

@@ -17,9 +17,11 @@ import java.util.Collection;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.AStar;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.BreadthFirstSearch;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.DepthFirstSearch;
-import ac.uk.aber.users.jov2.artificalintelligence.algorithms.IterativeDeeping;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.IterativeDeepening;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Hamming;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Heuristic;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Manhattan;
-import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.TileHeuristic;
+import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.TwoHeuristics;
 
 /**
  * Define the board and the operations on it. The grid is stored in a 2D array
@@ -43,7 +45,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	/**
 	 * The size of the puzzle, 3x3
 	 */
-	public final static int BOARD_SIZE = 3;
+	private final static int BOARD_SIZE = 3;
 
 	/**
 	 * The delay for the Tiles be moved
@@ -126,7 +128,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @param depth
 	 *            the int value of the current depth
 	 */
-	public MyBoard(int depth) {
+	private MyBoard(int depth) {
 		this.setDepth(depth);
 		addMouseListener(this);
 	}
@@ -136,6 +138,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * be printed: { 0 1 2 3 4 5 6 7 8 }
 	 * 
 	 * @return
+	 * 		The string result to print
 	 */
 	public String print() {
 		String ret = "{ ";
@@ -201,7 +204,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 			case RANDOMIZE:
 				temp = null;
 				initBoard();
-				paintSlow(this.getGraphics());
+				paintSlow();
 				break;
 			case START:
 				if (tile.getCBG().getSelectedCheckbox() == tile.getCBBFS()) {
@@ -211,9 +214,11 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getCBIT()) {
 					temp = iterativeDeepening(this);
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getAStart()) {
-					temp = aStar2(this);
+					temp = aStar(this, new Manhattan());
 				} else if (tile.getCBG().getSelectedCheckbox() == tile.getAstartTiles()) {
-					temp = aStarTiles(this);
+					temp = aStar(this, new Hamming());
+				} else if (tile.getCBG().getSelectedCheckbox() == tile.getAStartBoth()){
+					temp = aStar(this, new TwoHeuristics());
 				}
 				break;
 			case PLAY:
@@ -286,11 +291,9 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * 
 	 * @param newDelay
 	 *            The new delay value
-	 * @return the delay value
 	 */
-	public int setDelay(int newDelay) {
+	public void setDelay(int newDelay) {
 		delay = newDelay;
-		return delay;
 	}
 
 	/**
@@ -310,16 +313,14 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 
 	/**
 	 * Paint the entire board with the delay controlled by the slider
-	 * 
-	 * @param g
-	 *            The Graphics instace for use
+	 *
 	 */
-	public void paintSlow(Graphics g) {
+	public void paintSlow() {
 		repaint();
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
-			System.out.println(e);
+			System.out.println(e.toString());
 		}
 	}
 
@@ -331,7 +332,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @param y
 	 *            The y position
 	 */
-	public void drawCell(int x, int y) {
+	private void drawCell(int x, int y) {
 		// Draw the outline of the cell.
 		gr.setColor(Color.black);
 		gr.drawRect(x * gWidth, y * gHeight, gWidth, gHeight);
@@ -402,7 +403,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 *            The x coordinate
 	 * @param y
 	 *            The y coordinate
-	 * @return If is legal thats coordinates
+	 * @return If is legal that coordinates
 	 */
 	public boolean legal(int x, int y) {
 		return ((x >= 0) && (x < BOARD_SIZE) && (y >= 0) && (y < BOARD_SIZE));
@@ -429,7 +430,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 *            The board who have the solution
 	 * @return The board where start the solution
 	 */
-	public MyBoard findAncestors(MyBoard mb) {
+	private MyBoard findAncestors(MyBoard mb) {
 		MyBoard boardList = null;
 		MyBoard temp;
 		MyBoard tempNew;
@@ -457,7 +458,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 			stepCounter++;
 			tile.getStepCounterLabel().setText("<html>Solution step: <br>" + Integer.toString(stepCounter) + "</html>");
 			copyBoard(this, temp);
-			paintSlow(this.getGraphics());
+			paintSlow();
 			temp = temp.next;
 		}
 	}
@@ -485,7 +486,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @param mb
 	 *            The board to expand
 	 * @param list
-	 *            The list to add all his succesors
+	 *            The list to add all his successors
 	 * @param depth
 	 *            The depth we are currently
 	 */
@@ -544,21 +545,21 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @return
 	 * 			The board solved
 	 */
-	public MyBoard dfs(MyBoard mb) {
+	private MyBoard dfs(MyBoard mb) {
 		DepthFirstSearch dfs = new DepthFirstSearch(this, tile);
 		return dfs.solveWithTime(mb);
 	}
 
 	/**
-	 * Iterative Deeping Search (DPS)
+	 * Iterative Deepening Search (DPS)
 	 * An incremental depth limit until solution is reached
 	 * @param mb
 	 * 			The board to solve
 	 * @return
 	 * 			The board solved
 	 */
-	public MyBoard iterativeDeepening(MyBoard mb) {
-		IterativeDeeping id = new IterativeDeeping(this, tile);
+	private MyBoard iterativeDeepening(MyBoard mb) {
+		IterativeDeepening id = new IterativeDeepening(this, tile);
 		return id.solveWithTime(mb);
 	}
 
@@ -569,26 +570,14 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * 
 	 * @param mb
 	 * 		The board for solve
-	 * @return
-	 * 		The board solved
-	 */
-	public MyBoard aStar2(MyBoard mb) {
-		AStar as = new AStar(this, tile, new Manhattan());
-		return as.solveWithTime(mb);
-	}
-
-	/**
-	 * CS26110 Assignment
-	 * Create a A* object and the heuristic we want use
-	 * This method use the TileHeuristic
+	 * @param heuristic
+	 * 		The heuristic we want use for the A* algorithm
 	 * 
-	 * @param mb
-	 * 		The board for solve
 	 * @return
 	 * 		The board solved
 	 */
-	public MyBoard aStarTiles(MyBoard mb) {
-		AStar as = new AStar(this, tile, new TileHeuristic());
+	public MyBoard aStar(MyBoard mb, Heuristic heuristic) {
+		AStar as = new AStar(this, tile, heuristic);
 		return as.solveWithTime(mb);
 	}
 

@@ -15,7 +15,7 @@ public class BreadthFirstSearch extends Algorithm{
 	@Override
 	public MyBoard solve(MyBoard mb) {
 
-		MyBoard board = null;// new MyBoard();
+		MyBoard board;// new MyBoard();
 		LinkedList<MyBoard> frontier = new LinkedList<MyBoard>();
 		frontier.add(mb);
 

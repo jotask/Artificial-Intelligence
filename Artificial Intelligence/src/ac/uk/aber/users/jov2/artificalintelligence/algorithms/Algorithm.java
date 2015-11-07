@@ -22,12 +22,12 @@ public abstract class Algorithm {
 	/**
 	 * The instance of the generic board
 	 */
-	protected MyBoard myBoard;
+	protected final MyBoard myBoard;
 	
 	/**
 	 * The instance of the GUI
 	 */
-	protected Tile myTile;
+	protected final Tile myTile;
 	
 	// A HashSet is used for the explored list as we only need to check if a
 	// state has been seen before
@@ -53,7 +53,7 @@ public abstract class Algorithm {
 	 * @param mb
 	 * 		The initial board to solve
 	 * @return
-	 * 		return the board with all this childs for the
+	 * 		return the board with all this child's for the
 	 * 		solution
 	 */
 	public abstract MyBoard solve(MyBoard mb);
@@ -100,7 +100,7 @@ public abstract class Algorithm {
 
 			if (displaySearch) {
 				myBoard.copyBoard(myBoard, finalNode);
-				myBoard.paintSlow(myBoard.getGraphics());
+				myBoard.paintSlow();
 			}
 
 			myBoard.setStatus(Tile.IDLE);
@@ -126,13 +126,17 @@ public abstract class Algorithm {
 
 			// Print out some stats
 			StringBuilder text = new StringBuilder();
-			text.append("<html>");
-			text.append("<p>Nodes expanded: " + myBoard.stepCounter + "</p>");
-			text.append("<p>Solution lengh: " + solutionLength + "</p>");
+			text.append("<html>").append("<p>Nodes expanded: ")
+					.append(myBoard.stepCounter)
+					.append("</p>")
+					.append("<p>Solution length: ")
+					.append(solutionLength).append("</p>");
 			
 			String time = getHTMLTime();
 			if(!time.equals(""))
-				text.append("<p>" + time + "</p>");
+				text.append("<p>")
+						.append(time)
+						.append("</p>");
 			
 			text.append("</html>");
 			
@@ -154,8 +158,7 @@ public abstract class Algorithm {
 	 */
 	public MyBoard solveWithTime(MyBoard mb){
 		startTime = System.nanoTime();
-		MyBoard board = solve(mb);
-		return board;
+		return solve(mb);
 	}
 	
 	/**
@@ -184,7 +187,7 @@ public abstract class Algorithm {
 		// Display the inner node
 		if (displaySearch) {
 			myBoard.copyBoard(myBoard, board);
-			myBoard.paintSlow(myBoard.getGraphics());
+			myBoard.paintSlow();
 		}
 	}
 	
@@ -202,8 +205,7 @@ public abstract class Algorithm {
 		// FIXME doesn't calculate the right elapsed time
 		if(time != 0){
 			text.append("Solved in ");
-			System.out.println(time);
-			text.append(TimeUnit.MILLISECONDS.convert(time, TimeUnit.NANOSECONDS) + " ms.");
+			text.append(TimeUnit.MILLISECONDS.convert(time, TimeUnit.NANOSECONDS)).append(" ms.");
 		}else{
 			text.append("");
 		}
@@ -218,9 +220,7 @@ public abstract class Algorithm {
 	 * 		finish time
 	 */
 	private long getTime(){
-		long end = finishTime - startTime;
-		System.out.println("Total time is: " + end);
-		return end;
+		return finishTime - startTime;
 	}
 
 	/**

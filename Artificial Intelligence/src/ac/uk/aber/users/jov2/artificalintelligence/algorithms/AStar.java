@@ -91,6 +91,11 @@ public class AStar extends Algorithm {
 			// Iterate each node
 			for(Node n: successors){
 				
+				// If this node has been checked continue with the next succesor
+				if(alreadyVisited(n.getBoard())){
+					continue;
+				}
+				
 				// Set the parent of this successors to the current Node
 				n.setParent(current);
 				
@@ -102,10 +107,8 @@ public class AStar extends Algorithm {
 				// Calculate the heuristic value from the successors to the goal state
 				n.setH(this.heuristic.calculate(n, goal));
 				
-				// If this successor is not been checked add to the open list
-				if(!alreadyVisited(n.getBoard())){
-					open.offer(n);
-				}
+				// Add this node to the open list
+				open.offer(n);
 				
 			}
 		}
@@ -113,8 +116,8 @@ public class AStar extends Algorithm {
 		// If we finish loop means we didn't find a solution for this puzzle
 		// Just let know to the user we didn't find a solution
 		// And throw a runtime exception
-		myTile.getSoluLabel().setText("This Board doesn´t have any solution");
-		throw new RuntimeException("This Board doesn´t have any solution");
+		myTile.getSoluLabel().setText("This Board doesnï¿½t have any solution");
+		throw new RuntimeException("This Board doesn't have any solution");
 	}
 
 }

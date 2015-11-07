@@ -17,8 +17,10 @@ public abstract class Heuristic{
 	 * An abstract method for calculate the heuristic
 	 * from an given Node
 	 * 
-	 * @param n 
+	 * @param a
 	 * 			The Node for calculate his heuristic
+	 * @param b
+	 * 			The goal node for the calculation
 	 * @return
 	 * 			The heuristic value for the node
 	 */
