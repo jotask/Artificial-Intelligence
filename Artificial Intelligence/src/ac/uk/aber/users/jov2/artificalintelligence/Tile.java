@@ -58,12 +58,13 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 	Checkbox cbBfs = new Checkbox("Breadth First", cbg, true);
 	Checkbox cbDfs = new Checkbox("Depth First", cbg, false);
 	Checkbox cbIt = new Checkbox("Iterative Deepening", cbg, false);
-	Checkbox cbAStarTiles = new Checkbox("A*-Tiles", cbg, false);
+	Checkbox cbAStarTiles = new Checkbox("A*-Hamming", cbg, false);
 	Checkbox cbAStar = new Checkbox("A*-Manhattan", cbg, false);
+	Checkbox cbAStarBoth = new Checkbox("A*-TwoH", cbg, false);
 
 	Checkbox cbDisplay = new Checkbox("Display Search");
 	MyBoard board = new MyBoard(this); // this MyBoard b is used to display the
-										// graphic of the current borad.
+										// graphic of the current board.
 
 	/**
 	 * Initialise all the variables and put everything in his place
@@ -109,6 +110,7 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 		checkboxPanel.add(cbIt);
 		checkboxPanel.add(cbAStarTiles);
 		checkboxPanel.add(cbAStar);
+		checkboxPanel.add(cbAStarBoth);
 
 		eastCenterPanel.add(checkboxPanel);
 		eastCenterPanel.add(cbDisplay);
@@ -224,6 +226,10 @@ public class Tile extends JApplet implements ActionListener, ChangeListener {
 
 	public Checkbox getAStart() {
 		return this.cbAStar;
+	}
+
+	public Checkbox getAStartBoth() {
+		return this.cbAStarBoth;
 	}
 
 	public Checkbox getAstartTiles() {
