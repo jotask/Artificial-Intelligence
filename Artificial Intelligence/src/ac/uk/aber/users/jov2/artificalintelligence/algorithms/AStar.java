@@ -1,13 +1,13 @@
 package ac.uk.aber.users.jov2.artificalintelligence.algorithms;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.PriorityQueue;
-
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 import ac.uk.aber.users.jov2.artificalintelligence.Tile;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Heuristic;
 import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.PriorityQueue;
 
 /**
  * This class holds the A* algorithm and all he needs
@@ -54,10 +54,10 @@ public class AStar extends Algorithm {
 		start.setH(this.heuristic.calculate(start, goal));
 		
 		// Create a priority queue for the nodes for check OPEN LIST
-		PriorityQueue<Node> open = new PriorityQueue<Node>();
+		PriorityQueue<Node> open = new PriorityQueue<>();
 		
 		// Initialise the hasSet for the nodes already checked CLOSED LIST
-		explored = new HashSet<String>();
+		explored = new HashSet<>();
 		
 		// Add the start node the Queue
 		open.offer(start);
@@ -91,7 +91,7 @@ public class AStar extends Algorithm {
 			// Iterate each node
 			for(Node n: successors){
 				
-				// If this node has been checked continue with the next succesor
+				// If this node has been checked continue with the next successor
 				if(alreadyVisited(n.getBoard())){
 					continue;
 				}
@@ -116,7 +116,7 @@ public class AStar extends Algorithm {
 		// If we finish loop means we didn't find a solution for this puzzle
 		// Just let know to the user we didn't find a solution
 		// And throw a runtime exception
-		myTile.getSoluLabel().setText("This Board doesn�t have any solution");
+		myTile.getSoluLabel().setText("This Board doesn't have any solution");
 		throw new RuntimeException("This Board doesn't have any solution");
 	}
 

@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: ac.uk.aber.users.jov2.artificalintelligence.Application
+

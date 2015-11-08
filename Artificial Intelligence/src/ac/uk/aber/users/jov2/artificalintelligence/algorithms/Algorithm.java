@@ -1,10 +1,10 @@
 package ac.uk.aber.users.jov2.artificalintelligence.algorithms;
 
-import java.util.HashSet;
-import java.util.concurrent.TimeUnit;
-
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 import ac.uk.aber.users.jov2.artificalintelligence.Tile;
+
+import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 /**
  * All the algorithm needs to extend to this class
@@ -22,17 +22,17 @@ public abstract class Algorithm {
 	/**
 	 * The instance of the generic board
 	 */
-	protected final MyBoard myBoard;
+	final MyBoard myBoard;
 	
 	/**
 	 * The instance of the GUI
 	 */
-	protected final Tile myTile;
+	final Tile myTile;
 	
 	// A HashSet is used for the explored list as we only need to check if a
 	// state has been seen before
 	// and we don't need to retain any more information about it
-	protected HashSet<String> explored = null;
+	HashSet<String> explored = null;
 	
 	/**
 	 * Constructor for this abstract class.
@@ -42,7 +42,7 @@ public abstract class Algorithm {
 	 * @param myTile
 	 * 			The GUI instance
 	 */
-	protected Algorithm(MyBoard myBoard, Tile myTile) {
+	Algorithm(MyBoard myBoard, Tile myTile) {
 		this.myBoard = myBoard;
 		this.myTile = myTile;
 	}
@@ -56,7 +56,7 @@ public abstract class Algorithm {
 	 * 		return the board with all this child's for the
 	 * 		solution
 	 */
-	public abstract MyBoard solve(MyBoard mb);
+	protected abstract MyBoard solve(MyBoard mb);
 		
 	/**
 	 * Construct the path for the solution
@@ -69,7 +69,7 @@ public abstract class Algorithm {
 	 * @return
 	 * 		The initial board with the path build it
 	 */
-	public MyBoard finalise(MyBoard finalNode, boolean displaySearch){
+	MyBoard finalise(MyBoard finalNode, boolean displaySearch){
 		return finalise(finalNode, displaySearch, -1);
 	}
 	
@@ -83,8 +83,8 @@ public abstract class Algorithm {
 	 * 		boolean for know if we want display the search
 	 * @return
 	 * 		The initial board with the path build it
-	 */	
-	public MyBoard finalise(MyBoard finalNode, boolean displaySearch, int depth) {
+	 */
+	MyBoard finalise(MyBoard finalNode, boolean displaySearch, int depth) {
 		// Store the actual nanotime
 		finishTime = System.nanoTime();
 		
@@ -168,7 +168,7 @@ public abstract class Algorithm {
 	 * @return
 	 * 		true if is already visited
 	 */
-	protected boolean alreadyVisited(MyBoard board) {
+	boolean alreadyVisited(MyBoard board) {
 		return explored.contains(board.hash());
 	}
 	
@@ -179,7 +179,7 @@ public abstract class Algorithm {
 	 * @param board
 	 * 		The board with the information
 	 */
-	protected void updateGUI(boolean displaySearch, MyBoard board){
+	void updateGUI(boolean displaySearch, MyBoard board){
 		// Display the step counter
 		myBoard.stepCounter++;
 		myTile.getStepCounterLabel().setText("<html>Nodes expanded: <br>" + Integer.toString(myBoard.stepCounter) + "</html>");
@@ -229,7 +229,7 @@ public abstract class Algorithm {
 	 * @param board
 	 * 		The board to add to the explored list
 	 */
-	protected void addToExplored(MyBoard board) {
+	void addToExplored(MyBoard board) {
 		String hash = board.hash();
 		if (!explored.contains(hash))
 			explored.add(hash);

@@ -1,19 +1,5 @@
 package ac.uk.aber.users.jov2.artificalintelligence;
 
-import static ac.uk.aber.users.jov2.artificalintelligence.Tile.IDLE;
-import static ac.uk.aber.users.jov2.artificalintelligence.Tile.INI_DELAY;
-import static ac.uk.aber.users.jov2.artificalintelligence.Tile.PLAY;
-import static ac.uk.aber.users.jov2.artificalintelligence.Tile.RANDOMIZE;
-import static ac.uk.aber.users.jov2.artificalintelligence.Tile.START;
-
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Collection;
-
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.AStar;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.BreadthFirstSearch;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.DepthFirstSearch;
@@ -23,6 +9,13 @@ import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Heurist
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.Manhattan;
 import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.TwoHeuristics;
 
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Collection;
+
+import static ac.uk.aber.users.jov2.artificalintelligence.Tile.*;
+
 /**
  * Define the board and the operations on it. The grid is stored in a 2D array
  * in columns, a 0 is used to indicate the blank
@@ -31,11 +24,6 @@ import ac.uk.aber.users.jov2.artificalintelligence.algorithms.heuristics.TwoHeur
  *
  */
 public class MyBoard extends Canvas implements MouseListener, Runnable {
-
-	/**
-	 * Auto-generated serial for the canvas This needs to be generated
-	 */
-	private static final long serialVersionUID = 2975289542336640148L;
 
 	/**
 	 * The tile instance
@@ -109,7 +97,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	/**
 	 * What the goal state looks like in this representation
 	 */
-	private int[][] goalState = { { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 } };
+	private final int[][] goalState = { { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 } };
 
 	/**
 	 * Main constructor of the class of MyBoard
@@ -131,23 +119,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	private MyBoard(int depth) {
 		this.setDepth(depth);
 		addMouseListener(this);
-	}
-
-	/**
-	 * print the grid in a one dimensional format In this format, the goal would
-	 * be printed: { 0 1 2 3 4 5 6 7 8 }
-	 * 
-	 * @return
-	 * 		The string result to print
-	 */
-	public String print() {
-		String ret = "{ ";
-		for (int i = 0; i < BOARD_SIZE; i++) {
-			for (int j = 0; j < BOARD_SIZE; j++) {
-				ret += grid[j][i] + " ";
-			}
-		}
-		return ret + "}";
 	}
 
 	/**
@@ -183,21 +154,11 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	}
 
 	/**
-	 * Stop the Thread Look at the Java Tutorial or
-	 * http://java.sun.com/products/jdk/1.2/docs/guide/misc/
-	 * threadPrimitiveDeprecation.html
-	 */
-	public void stop() {
-		if ((animationThread != null) && (animationThread.isAlive())) {
-			animationThread = null;
-		}
-	}
-
-	/**
 	 * Run the Thread. This is required when you implement the Runnable
 	 * interface. Namely, repaint the display board according to the board
 	 * status
 	 */
+	@SuppressWarnings("InfiniteLoopStatement")
 	public void run() {
 		while (true) {
 			switch (status) {
@@ -240,7 +201,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * It's possible to generate unsolvable 8 puzzles if you're not careful
 	 * (i.e. just randomly generating grids).
 	 */
-	public void initBoard() {
+	private void initBoard() {
 		int difficulty;
 		int counter;
 		int rand;
@@ -405,7 +366,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 *            The y coordinate
 	 * @return If is legal that coordinates
 	 */
-	public boolean legal(int x, int y) {
+	private boolean legal(int x, int y) {
 		return ((x >= 0) && (x < BOARD_SIZE) && (y >= 0) && (y < BOARD_SIZE));
 	}
 
@@ -419,8 +380,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 */
 	public void copyBoard(MyBoard mbNew, MyBoard mbOld) {
 		for (int i = 0; i < BOARD_SIZE; i++)
-			for (int j = 0; j < BOARD_SIZE; j++)
-				mbNew.grid[i][j] = mbOld.grid[i][j];
+			System.arraycopy(mbOld.grid[i], 0, mbNew.grid[i], 0, BOARD_SIZE);
 	}
 
 	/**
@@ -451,7 +411,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @param mb
 	 *            The Board
 	 */
-	public void displaySolution(MyBoard mb) {
+	private void displaySolution(MyBoard mb) {
 		MyBoard temp = mb;
 		stepCounter = -1;
 		while (temp != null) {
@@ -469,7 +429,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @param mb
 	 *            The start board
 	 */
-	public void play(MyBoard mb) {
+	private void play(MyBoard mb) {
 		tile.getSliderDisplay().setValue(INI_DELAY);
 		displaySolution(findAncestors(mb));
 		status = IDLE;
@@ -576,7 +536,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @return
 	 * 		The board solved
 	 */
-	public MyBoard aStar(MyBoard mb, Heuristic heuristic) {
+	private MyBoard aStar(MyBoard mb, Heuristic heuristic) {
 		AStar as = new AStar(this, tile, heuristic);
 		return as.solveWithTime(mb);
 	}
@@ -589,7 +549,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @return
 	 * 		The Board solved
 	 */
-	public MyBoard bfs(MyBoard mb) {
+	private MyBoard bfs(MyBoard mb) {
 		BreadthFirstSearch bfs = new BreadthFirstSearch(this, tile);
 		return bfs.solveWithTime(mb);
 	}
@@ -602,7 +562,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @return
 	 * 		The List of all possibles successors
 	 */
-	public MyBoard expandAll(MyBoard mb) {
+	private MyBoard expandAll(MyBoard mb) {
 		int p = -1;
 		int q = -1;
 		MyBoard nextBoardHead = new MyBoard(tile);
@@ -688,7 +648,7 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 * @return
 	 * 		The grid with the goal state
 	 */
-	public int[][] getGoalState() {
+	private int[][] getGoalState() {
 		return this.goalState;
 	}
 
@@ -699,15 +659,6 @@ public class MyBoard extends Canvas implements MouseListener, Runnable {
 	 */
 	public int[][] getGrid() {
 		return this.grid;
-	}
-
-	/**
-	 * Get the status
-	 * @return
-	 * 		The status
-	 */
-	public int getStatus() {
-		return status;
 	}
 
 	/**

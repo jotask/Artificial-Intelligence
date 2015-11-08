@@ -1,9 +1,8 @@
 package ac.uk.aber.users.jov2.artificalintelligence;
 
+import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.JFrame;
 
 /**
  * Main class which hold the main method.
@@ -12,12 +11,12 @@ import javax.swing.JFrame;
  * @author Richard Jensen and Jose Vives
  *
  */
-public class Application {
+class Application {
 
 	private final static int WINDOW_WIDTH = 560;
 	private final static int WINDOW_HEIGHT = 780;
 	
-	public Application() {
+	private Application() {
 		// Create the frame for the GUI
 		JFrame applicationFrame = new JFrame( "8 Puzzle");
 

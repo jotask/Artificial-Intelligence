@@ -1,15 +1,15 @@
 package ac.uk.aber.users.jov2.artificalintelligence.algorithms;
 
-import java.util.HashMap;
-import java.util.Stack;
-
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 import ac.uk.aber.users.jov2.artificalintelligence.Tile;
+
+import java.util.HashMap;
+import java.util.Stack;
 
 public class IterativeDeepening extends Algorithm {
 	
 	//A HashMap has to be used for IDS as you also need to keep track of the depth of nodes:
-	HashMap<String, Integer> exploredIDS;
+	private HashMap<String, Integer> exploredIDS;
 
 	public IterativeDeepening(MyBoard myBoard, Tile myTile) {
 		super(myBoard, myTile);
@@ -24,10 +24,10 @@ public class IterativeDeepening extends Algorithm {
 		boolean displaySearch = myTile.getCBDisplay().getState();
 	
 		for (int depth=0;depth<1000000000;depth++) {
-			Stack<MyBoard> frontier = new Stack<MyBoard>();
+			Stack<MyBoard> frontier = new Stack<>();
 			mb.setDepth(0);
 			frontier.push(mb);
-			exploredIDS = new HashMap<String, Integer>();
+			exploredIDS = new HashMap<>();
 			
 			while ((!myBoard.stopAlgorithm)&&(frontier.size()>0)) {	
 				board = frontier.pop();

@@ -4,7 +4,8 @@ import ac.uk.aber.users.jov2.artificalintelligence.util.Node;
 
 public class TwoHeuristics extends Heuristic {
 
-	private Heuristic manhattan, hamming;
+	private final Heuristic manhattan;
+	private final Heuristic hamming;
 	
 	public TwoHeuristics() {
 		manhattan = new Manhattan();

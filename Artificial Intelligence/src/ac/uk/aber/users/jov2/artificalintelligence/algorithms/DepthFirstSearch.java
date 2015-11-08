@@ -1,10 +1,10 @@
 package ac.uk.aber.users.jov2.artificalintelligence.algorithms;
 
-import java.util.HashSet;
-import java.util.Stack;
-
 import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 import ac.uk.aber.users.jov2.artificalintelligence.Tile;
+
+import java.util.HashSet;
+import java.util.Stack;
 
 public class DepthFirstSearch extends Algorithm{
 
@@ -15,10 +15,10 @@ public class DepthFirstSearch extends Algorithm{
 	@Override
 	public MyBoard solve(MyBoard mb) {
 		MyBoard board;
-		Stack<MyBoard> frontier = new Stack<MyBoard>();
+		Stack<MyBoard> frontier = new Stack<>();
 		frontier.add(mb);
 
-		explored = new HashSet<String>();
+		explored = new HashSet<>();
 		myBoard.stepCounter = -1;
 
 		myTile.getSoluLabel().setText("Searching ...");
@@ -36,12 +36,13 @@ public class DepthFirstSearch extends Algorithm{
 
 				// Attach the expanded succeeding nodes onto the top of the
 				// stack.
-				int depth = board.getDepth();
-				myBoard.expandAll(board, frontier, depth++);
+				int depth = board.getDepth() + 1;
+				myBoard.expandAll(board, frontier, depth);
 			}
 
 			board = frontier.pop();
 		}
+		assert board != null;
 		return finalise(board, displaySearch, board.getDepth());
 	}
 

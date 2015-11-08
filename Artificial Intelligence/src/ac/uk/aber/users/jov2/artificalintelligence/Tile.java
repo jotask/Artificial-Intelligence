@@ -1,19 +1,11 @@
 package ac.uk.aber.users.jov2.artificalintelligence;
 
-import java.awt.BorderLayout;
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
-import java.awt.GridLayout;
-import java.awt.Panel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JSlider;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * All the GUI components for the application
@@ -25,45 +17,43 @@ import javax.swing.event.ChangeListener;
  */
 public class Tile extends JApplet implements ActionListener, ChangeListener {
 
-	private static final long serialVersionUID = 780417925043043398L;
-
 	// Some constants to be used elsewhere
-	final static int MIN_DELAY = 0;
-	final static int MAX_DELAY = 3000;
+	private final static int MIN_DELAY = 0;
+	private final static int MAX_DELAY = 3000;
 	final static int INI_DELAY = 1500;
 
-	final static int MIN_DIFFICULTY = 0;
-	final static int MAX_DIFFICULTY = 100;
-	final static int INI_DIFFICULTY = 20; // initial difficulty setting
+	private final static int MIN_DIFFICULTY = 0;
+	private final static int MAX_DIFFICULTY = 100;
+	private final static int INI_DIFFICULTY = 20; // initial difficulty setting
 
 	// Determines the state of the GUI
-	public final static int STOP = 0;
+	private final static int STOP = 0;
 	public final static int RANDOMIZE = 1;
 	public final static int IDLE = 2;
 	public final static int START = 3;
 	public final static int PLAY = 4;
 
 	// GUI components
-	JButton stop = new JButton("Stop Search");
-	JButton start = new JButton("Start Search");
-	JButton play = new JButton("Play Solution");
-	JButton randomize = new JButton("Mix it!");
-	JSlider sliderDisplay = new JSlider(JSlider.HORIZONTAL, MIN_DELAY, MAX_DELAY, INI_DELAY);
-	JSlider sliderRandomize = new JSlider(JSlider.HORIZONTAL, MIN_DIFFICULTY, MAX_DIFFICULTY, INI_DIFFICULTY);
-	JLabel stepCounterLabel = new JLabel("<html>Nodes expanded: <br>" + "0" + "</html>");
-	JLabel soluLabel = new JLabel(" ");
+	private final JButton stop = new JButton("Stop Search");
+	private final JButton start = new JButton("Start Search");
+	private final JButton play = new JButton("Play Solution");
+	private final JButton randomize = new JButton("Mix it!");
+	private final JSlider sliderDisplay = new JSlider(JSlider.HORIZONTAL, MIN_DELAY, MAX_DELAY, INI_DELAY);
+	private final JSlider sliderRandomize = new JSlider(JSlider.HORIZONTAL, MIN_DIFFICULTY, MAX_DIFFICULTY, INI_DIFFICULTY);
+	private final JLabel stepCounterLabel = new JLabel("<html>Nodes expanded: <br>" + "0" + "</html>");
+	private final JLabel soluLabel = new JLabel(" ");
 
 	// Checkboxes for selecting the algorithms
-	CheckboxGroup cbg = new CheckboxGroup();
-	Checkbox cbBfs = new Checkbox("Breadth First", cbg, true);
-	Checkbox cbDfs = new Checkbox("Depth First", cbg, false);
-	Checkbox cbIt = new Checkbox("Iterative Deepening", cbg, false);
-	Checkbox cbAStarTiles = new Checkbox("A*-Hamming", cbg, false);
-	Checkbox cbAStar = new Checkbox("A*-Manhattan", cbg, false);
-	Checkbox cbAStarBoth = new Checkbox("A*-TwoH", cbg, false);
+	private final CheckboxGroup cbg = new CheckboxGroup();
+	private final Checkbox cbBfs = new Checkbox("Breadth First", cbg, true);
+	private final Checkbox cbDfs = new Checkbox("Depth First", cbg, false);
+	private final Checkbox cbIt = new Checkbox("Iterative Deepening", cbg, false);
+	private final Checkbox cbAStarTiles = new Checkbox("A*-Hamming", cbg, false);
+	private final Checkbox cbAStar = new Checkbox("A*-Manhattan", cbg, false);
+	private final Checkbox cbAStarBoth = new Checkbox("A*-TwoH", cbg, false);
 
-	Checkbox cbDisplay = new Checkbox("Display Search");
-	MyBoard board = new MyBoard(this); // this MyBoard b is used to display the
+	private final Checkbox cbDisplay = new Checkbox("Display Search");
+	private final MyBoard board = new MyBoard(this); // this MyBoard b is used to display the
 										// graphic of the current board.
 
 	/**

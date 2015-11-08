@@ -1,9 +1,9 @@
 package ac.uk.aber.users.jov2.artificalintelligence.util;
 
+import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import ac.uk.aber.users.jov2.artificalintelligence.MyBoard;
 
 /**
  * This class holds information for the A* algorithm
@@ -89,15 +89,6 @@ public class Node implements Comparable<Node>{
 	 */
 	private int getF(){
 		return this.g + this.h;
-	}
-	
-	/**
-	 * Getter for the Heuristic value of this node
-	 * @return
-	 * 		The H value of this node
-	 */
-	public int getH(){
-		return this.h;
 	}
 	
 	/**
